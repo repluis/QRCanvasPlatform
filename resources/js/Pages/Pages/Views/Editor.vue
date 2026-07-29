@@ -8,10 +8,12 @@ import ImageLibrary from '../Components/ImageLibrary.vue'
 import TextPropertiesPanel from '../Components/TextPropertiesPanel.vue'
 import { savePage } from '../Services/canvas.service'
 
-const { images, savedSlug } = usePage().props
+const { images, userPages } = usePage().props
 const saving = ref(false)
 const saved = ref(false)
-const currentSlug = ref(savedSlug ?? '')
+const currentUuid = ref('')
+const currentPageId = ref(null)
+const showPagesList = ref(true)
 
 const {
     elements,
@@ -25,6 +27,7 @@ const {
     moveElement,
     bringForward,
     sendBackward,
+    clearCanvas,
 } = useCanvas()
 
 function onMove(id, x, y) {
@@ -35,14 +38,31 @@ function onDeselect() {
     select(null)
 }
 
+function loadPage(page) {
+    currentUuid.value = page.uuid
+    currentPageId.value = page.id
+    elements.value = page.elements || []
+}
+
+function newPage() {
+    currentUuid.value = ''
+    currentPageId.value = null
+    elements.value = []
+}
+
 async function handleSave() {
     saving.value = true
     saved.value = false
     try {
-        const slug = currentSlug.value || 'page-' + Date.now()
-        await savePage({ title: 'Mi página', elements: elements.value, slug })
-        currentSlug.value = slug
+        const slug = currentUuid.value || 'page-' + Date.now()
+        const data = { title: 'Mi página', elements: elements.value, slug }
+        if (currentPageId.value) {
+            data.id = currentPageId.value
+        }
+        const res = await savePage(data)
+        currentUuid.value = res.page.uuid
         saved.value = true
+        router.reload({ only: ['userPages'] })
         setTimeout(() => (saved.value = false), 3000)
     } catch (e) {
         alert('Error al guardar')
@@ -52,8 +72,8 @@ async function handleSave() {
 }
 
 function viewPage() {
-    if (currentSlug.value) {
-        window.open(`/p/${currentSlug.value}`, '_blank')
+    if (currentUuid.value) {
+        window.open(`/page/${currentUuid.value}`, '_blank')
     }
 }
 </script>
@@ -74,7 +94,13 @@ function viewPage() {
             />
             <div class="flex items-center gap-2">
                 <button
-                    v-if="currentSlug"
+                    class="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-600 transition hover:bg-gray-50 active:scale-95"
+                    @click="showPagesList = !showPagesList"
+                >
+                    {{ showPagesList ? 'Ocultar' : 'Mis páginas' }}
+                </button>
+                <button
+                    v-if="currentUuid"
                     class="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-600 transition hover:bg-gray-50 active:scale-95"
                     @click="viewPage"
                 >
@@ -93,6 +119,36 @@ function viewPage() {
         </div>
 
         <div class="flex flex-1 overflow-hidden">
+            <div
+                v-if="showPagesList"
+                class="flex w-64 flex-col border-r bg-white"
+            >
+                <div class="flex items-center justify-between border-b px-4 py-3">
+                    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Mis páginas</h3>
+                    <button
+                        class="rounded-lg bg-indigo-500 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-indigo-600"
+                        @click="newPage"
+                    >
+                        + Nueva
+                    </button>
+                </div>
+                <div class="flex-1 overflow-y-auto p-2">
+                    <button
+                        v-for="p in userPages"
+                        :key="p.id"
+                        class="w-full rounded-lg px-3 py-2.5 text-left text-sm transition hover:bg-indigo-50"
+                        :class="{ 'bg-indigo-50 ring-1 ring-indigo-300': p.uuid === currentUuid }"
+                        @click="loadPage(p)"
+                    >
+                        <span class="block font-medium text-gray-800 truncate">{{ p.title }}</span>
+                        <span class="block text-xs text-gray-400 mt-0.5">{{ p.updated_at }}</span>
+                    </button>
+                    <p v-if="userPages.length === 0" class="px-3 py-6 text-center text-sm text-gray-400">
+                        No tienes páginas aún
+                    </p>
+                </div>
+            </div>
+
             <EditorCanvas
                 :elements="elements"
                 :selected-id="selectedId"

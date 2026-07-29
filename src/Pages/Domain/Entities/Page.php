@@ -11,6 +11,8 @@ class Page extends Entity
         private string $title = 'Sin título',
         private array $elements = [],
         private ?string $slug = null,
+        private ?string $uuid = null,
+        private ?int $userId = null,
         private mixed $createdAt = null,
         private mixed $updatedAt = null,
     ) {
@@ -30,6 +32,16 @@ class Page extends Entity
     public function getSlug(): string
     {
         return $this->slug ?? 'page-' . $this->getId();
+    }
+
+    public function getUuid(): ?string
+    {
+        return $this->uuid;
+    }
+
+    public function getUserId(): ?int
+    {
+        return $this->userId;
     }
 
     public function getCreatedAt(): mixed

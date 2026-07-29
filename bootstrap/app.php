@@ -12,6 +12,7 @@ return Application::configure(basePath: dirname(__DIR__))
         commands: __DIR__.'/../routes/console.php',
         health: '/up',
         then: function () {
+            require base_path('src/Auth/Infrastructure/Routes/auth.php');
             require base_path('src/QR/Infrastructure/Routes/qr.php');
             require base_path('src/Pages/Infrastructure/Routes/pages.php');
         },
@@ -19,6 +20,11 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->web(append: [
             HandleInertiaRequests::class,
+        ]);
+
+        $middleware->validateCsrfTokens(except: [
+            'register',
+            'login',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

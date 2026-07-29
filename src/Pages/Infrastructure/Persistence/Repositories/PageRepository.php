@@ -16,9 +16,9 @@ class PageRepository implements PageRepositoryInterface
         return $model->toEntity();
     }
 
-    public function findBySlug(string $slug): ?Page
+    public function findByUuid(string $uuid): ?Page
     {
-        $model = PageModel::where('slug', $slug)->first();
+        $model = PageModel::where('uuid', $uuid)->first();
 
         return $model?->toEntity();
     }
@@ -28,5 +28,14 @@ class PageRepository implements PageRepositoryInterface
         $model = PageModel::find($id);
 
         return $model?->toEntity();
+    }
+
+    public function findByUserId(int $userId): array
+    {
+        return PageModel::where('user_id', $userId)
+            ->orderBy('updated_at', 'desc')
+            ->get()
+            ->map(fn (PageModel $model) => $model->toEntity())
+            ->all();
     }
 }

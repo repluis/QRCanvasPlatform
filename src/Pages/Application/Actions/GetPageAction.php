@@ -11,9 +11,9 @@ class GetPageAction
         private readonly PageRepositoryInterface $pageRepository
     ) {}
 
-    public function bySlug(string $slug): ?Page
+    public function byUuid(string $uuid): ?Page
     {
-        return $this->pageRepository->findBySlug($slug);
+        return $this->pageRepository->findByUuid($uuid);
     }
 
     public function byId(int $id): ?Page

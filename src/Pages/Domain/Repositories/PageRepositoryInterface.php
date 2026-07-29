@@ -8,7 +8,10 @@ interface PageRepositoryInterface
 {
     public function save(Page $page): Page;
 
-    public function findBySlug(string $slug): ?Page;
+    public function findByUuid(string $uuid): ?Page;
 
     public function findById(int $id): ?Page;
+
+    /** @return Page[] */
+    public function findByUserId(int $userId): array;
 }

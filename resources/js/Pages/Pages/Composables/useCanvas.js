@@ -80,6 +80,11 @@ export function useCanvas() {
         }
     }
 
+    function clearCanvas() {
+        elements.value = []
+        selectedId.value = null
+    }
+
     return {
         elements,
         selectedId,
@@ -92,5 +97,6 @@ export function useCanvas() {
         moveElement,
         bringForward,
         sendBackward,
+        clearCanvas,
     }
 }
