@@ -25,6 +25,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->validateCsrfTokens(except: [
             'register',
             'login',
+            'qr/generate',
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

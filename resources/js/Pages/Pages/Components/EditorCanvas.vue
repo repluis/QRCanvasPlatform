@@ -5,6 +5,8 @@ const props = defineProps({
     elements: { type: Array, required: true },
     selectedId: { type: [String, null], default: null },
     background: { type: String, default: '#ffffff' },
+    canvasWidth: { type: Number, default: 800 },
+    canvasHeight: { type: Number, default: 600 },
 })
 
 const emit = defineEmits(['select', 'move', 'remove', 'update', 'deselect'])
@@ -25,7 +27,14 @@ function onMove(id, x, y) {
         class="relative flex-1 overflow-hidden bg-gray-100"
         @mousedown="onCanvasClick"
     >
-        <div class="relative mx-auto my-8 h-[600px] w-[800px] shadow-lg" :style="{ background: background }">
+        <div
+            class="relative mx-auto my-8 shadow-lg"
+            :style="{
+                background: background,
+                width: canvasWidth + 'px',
+                height: canvasHeight + 'px',
+            }"
+        >
             <CanvasElement
                 v-for="el in elements"
                 :key="el.id"

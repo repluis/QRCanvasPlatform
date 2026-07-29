@@ -7,15 +7,21 @@ function syncNextId(elements) {
     if (max >= nextId) nextId = max + 1
 }
 
-const SHAPES = ['heart', 'star', 'circle', 'moon', 'diamond', 'triangle', 'hexagon', 'cloud']
+const SHAPES = ['heart', 'star', 'circle', 'moon', 'diamond', 'triangle', 'hexagon', 'cloud', 'arrow-right', 'arrow-left', 'arrow-up', 'arrow-down', 'cross', 'plus', 'check', 'lightning']
 
-function createCanvas() {
-    return { elements: [], background: '#ffffff' }
+function createCanvas(width = 800, height = 600) {
+    return { elements: [], background: '#ffffff', width, height, visible: true }
 }
 
 export function useCanvas(initialCanvases) {
     const canvases = ref(initialCanvases && initialCanvases.length
-        ? initialCanvases.map(c => ({ elements: [...c.elements], background: c.background }))
+        ? initialCanvases.map(c => ({
+            elements: [...c.elements],
+            background: c.background,
+            width: c.width || 800,
+            height: c.height || 600,
+            visible: c.visible !== false,
+        }))
         : [createCanvas()]
     )
 
@@ -46,6 +52,10 @@ export function useCanvas(initialCanvases) {
             content: content || 'Texto',
             fontSize: 20,
             fontWeight: 'normal',
+            fontStyle: 'normal',
+            textDecoration: 'none',
+            textAlign: 'center',
+            fontFamily: 'sans-serif',
             color: '#1f2937',
         })
         selectedId.value = id
@@ -78,6 +88,29 @@ export function useCanvas(initialCanvases) {
             color: '#ef4444',
         })
         selectedId.value = id
+    }
+
+    function addQR(qrData) {
+        console.log('[addQR] agregando elemento QR:', qrData)
+        const id = String(nextId++)
+        const el = {
+            id,
+            type: 'qr',
+            x: 50 + (elements.value.length * 30) % 300,
+            y: 50 + (elements.value.length * 30) % 300,
+            width: 150,
+            height: 150,
+            content: qrData.text || '',
+            qrImageUrl: qrData.image_url || '',
+            foregroundColor: qrData.foreground_color || '#000000',
+            backgroundColor: qrData.background_color || '#ffffff',
+            errorCorrectionLevel: qrData.error_correction_level || 'medium',
+        }
+        console.log('[addQR] elemento a insertar:', el)
+        console.log('[addQR] canvas actual:', activeIndex.value, 'elements antes:', elements.value.length)
+        canvases.value[activeIndex.value].elements.push(el)
+        selectedId.value = id
+        console.log('[addQR] elements después:', elements.value.length, 'selectedId:', id)
     }
 
     function removeSelected() {
@@ -130,10 +163,16 @@ export function useCanvas(initialCanvases) {
         canvases.value[activeIndex.value].background = value
     }
 
-    function addCanvas() {
-        canvases.value.push(createCanvas())
+    function addCanvas(width = 800, height = 600) {
+        canvases.value.push(createCanvas(width, height))
         activeIndex.value = canvases.value.length - 1
         selectedId.value = null
+    }
+
+    function toggleCanvasVisibility(index) {
+        if (canvases.value[index]) {
+            canvases.value[index].visible = !canvases.value[index].visible
+        }
     }
 
     function removeCanvas(index) {
@@ -163,6 +202,7 @@ export function useCanvas(initialCanvases) {
         addText,
         addImage,
         addShape,
+        addQR,
         removeSelected,
         select,
         updateElement,
@@ -174,5 +214,6 @@ export function useCanvas(initialCanvases) {
         addCanvas,
         removeCanvas,
         switchCanvas,
+        toggleCanvasVisibility,
     }
 }

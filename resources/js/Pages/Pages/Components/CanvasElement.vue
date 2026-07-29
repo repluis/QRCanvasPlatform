@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed } from 'vue'
+import QRElement from './QRElement.vue'
 
 const props = defineProps({
     element: { type: Object, required: true },
@@ -44,6 +45,14 @@ const shapePath = computed(() => {
     if (s === 'triangle') return 'M12 2L2 22h20L12 2z'
     if (s === 'hexagon') return 'M12 2l8.66 5v10L12 22l-8.66-5V7L12 2z'
     if (s === 'cloud') return 'M19.35 10.04A7.49 7.49 0 0012 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 000 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z'
+    if (s === 'arrow-right') return 'M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z'
+    if (s === 'arrow-left') return 'M12 20l1.41-1.41L7.83 13H20v-2H7.83l5.58-5.59L12 4l-8 8z'
+    if (s === 'arrow-up') return 'M4 12l1.41 1.41L11 7.83V20h2V7.83l5.59 5.58L20 12l-8-8z'
+    if (s === 'arrow-down') return 'M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.59-5.58L4 12l8 8z'
+    if (s === 'cross') return 'M10 2h4v8h8v4h-8v8h-4v-8H2v-4h8z'
+    if (s === 'plus') return 'M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z'
+    if (s === 'check') return 'M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z'
+    if (s === 'lightning') return 'M13 2L3 14h7l-1 8 10-12h-7z'
     return ''
 })
 
@@ -96,12 +105,20 @@ function onMouseDown(e) {
         >
             <path :d="shapePath" />
         </svg>
+        <QRElement
+            v-else-if="element.type === 'qr'"
+            :element="element"
+        />
         <div
             v-else
-            class="flex h-full w-full items-center justify-center rounded px-2 pointer-events-none"
+            class="flex h-full w-full items-center rounded px-2 pointer-events-none"
             :style="{
                 fontSize: `${element.fontSize}px`,
                 fontWeight: element.fontWeight,
+                fontStyle: element.fontStyle,
+                textDecoration: element.textDecoration,
+                textAlign: element.textAlign,
+                fontFamily: element.fontFamily,
                 color: element.color,
             }"
         >

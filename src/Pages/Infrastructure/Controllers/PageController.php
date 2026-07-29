@@ -3,6 +3,7 @@
 namespace Src\Pages\Infrastructure\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Src\Pages\Application\Actions\GetPageAction;
 use Src\Pages\Application\Actions\GetUserPagesAction;
@@ -33,6 +34,9 @@ class PageController extends BaseController
             $response['canvases'] = [[
                 'elements' => $found->getElements(),
                 'background' => $found->getBackground(),
+                'width' => 800,
+                'height' => 600,
+                'visible' => true,
             ]];
         }
 
@@ -41,6 +45,11 @@ class PageController extends BaseController
 
     public function editor(Request $request)
     {
+        Log::info('[PageController] editor page requested', [
+            'uuid' => $request->query('uuid'),
+            'user_id' => auth()->id(),
+        ]);
+
         $userPages = $this->getUserPagesAction->execute(auth()->id());
 
         $page = null;
@@ -48,6 +57,12 @@ class PageController extends BaseController
             $found = $this->getPageAction->byUuid($uuid);
             if ($found) {
                 $page = $this->buildPageResponse($found);
+                Log::info('[PageController] page loaded', [
+                    'uuid' => $uuid,
+                    'canvases_count' => count($page['canvases'] ?? []),
+                ]);
+            } else {
+                Log::warning('[PageController] page not found', ['uuid' => $uuid]);
             }
         }
 
@@ -66,32 +81,69 @@ class PageController extends BaseController
 
     public function save(Request $request)
     {
+        $userId = auth()->id();
+        $title = $request->input('title');
+        $slug = $request->input('slug');
+        $canvases = $request->input('canvases', []);
+        $hasId = !empty($request->input('id'));
+
+        Log::info('[PageController] save page solicitado', [
+            'user_id' => $userId,
+            'title' => $title,
+            'slug' => $slug,
+            'canvases_count' => count($canvases),
+            'has_id' => $hasId,
+        ]);
+
         $dto = new SavePageDTO(
-            title: $request->input('title', 'Sin título'),
+            title: $title ?? 'Sin titulo',
             elements: $request->input('elements', []),
-            canvases: $request->input('canvases', []),
-            slug: $request->input('slug', 'page-' . uniqid()),
+            canvases: $canvases,
+            slug: $slug ?? ('page-' . uniqid()),
             background: $request->input('background', '#ffffff'),
             id: $request->integer('id', null) ?: null,
             userId: auth()->id(),
         );
 
-        $page = $this->savePageAction->execute($dto);
+        try {
+            $page = $this->savePageAction->execute($dto);
 
-        return response()->json([
-            'message' => 'Page saved successfully',
-            'page' => $this->buildPageResponse($page),
-        ]);
+            Log::info('[PageController] page guardada exitosamente', [
+                'id' => $page->getId(),
+                'uuid' => $page->getUuid(),
+            ]);
+
+            return response()->json([
+                'message' => 'Page saved successfully',
+                'page' => $this->buildPageResponse($page),
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('[PageController] error guardando page', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'error' => 'Error al guardar la pagina',
+                'message' => $e->getMessage(),
+            ], 500);
+        }
     }
 
     public function show(Request $request)
     {
         $uuid = $request->query('uuid');
-        if (!$uuid) abort(404);
+        if (!$uuid) {
+            Log::warning('[PageController] show page sin uuid');
+            abort(404);
+        }
+
+        Log::info('[PageController] show page solicitado', ['uuid' => $uuid]);
 
         $page = $this->getPageAction->byUuid($uuid);
 
         if (!$page) {
+            Log::warning('[PageController] page no encontrada', ['uuid' => $uuid]);
             abort(404);
         }
 
