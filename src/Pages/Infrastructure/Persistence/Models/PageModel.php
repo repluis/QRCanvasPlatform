@@ -47,10 +47,10 @@ class PageModel extends Model
 
     public static function fromEntity(Page $page): self
     {
-        $model = new self();
-        if ($page->getId() !== null) {
-            $model->id = $page->getId();
-        }
+        $model = $page->getId()
+            ? static::query()->find($page->getId()) ?? new self()
+            : new self();
+
         $model->title = $page->getTitle();
         $model->elements = $page->getElements();
         $model->slug = $page->getSlug();

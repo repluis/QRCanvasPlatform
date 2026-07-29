@@ -1,5 +1,8 @@
 <script setup>
-import { Head, Link, usePage } from '@inertiajs/vue3'
+import { Head, usePage } from '@inertiajs/vue3'
+import { defineOptions } from 'vue'
+
+defineOptions({ layout: null })
 
 const { page } = usePage().props
 
@@ -20,37 +23,32 @@ function elementStyle(el) {
 <template>
     <Head :title="page.title" />
 
-    <div class="min-h-screen bg-gray-100">
-        <div class="mx-auto flex min-h-screen w-[800px] flex-col bg-white shadow-lg">
-            <div class="flex items-center justify-between border-b px-6 py-3">
-                <h1 class="text-lg font-semibold text-gray-800">{{ page.title }}</h1>
-                <Link
-                    href="/editor"
-                    class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-700"
-                >
-                    Editar
-                </Link>
+    <div
+        class="flex min-h-screen items-start justify-center"
+        :style="{ backgroundColor: 'var(--bg)', paddingTop: '2rem' }"
+    >
+        <div
+            class="relative shadow-lg"
+            :style="{ width: '800px', minHeight: '600px', backgroundColor: '#fff' }"
+        >
+            <div v-for="el in page.elements" :key="el.id" :style="elementStyle(el)" class="select-none">
+                <img
+                    v-if="el.type === 'image'"
+                    :src="el.content"
+                    class="h-full w-full object-cover"
+                    draggable="false"
+                />
+                <div v-else>
+                    {{ el.content }}
+                </div>
             </div>
 
-            <div class="relative flex-1" style="min-height: 600px">
-                <div v-for="el in page.elements" :key="el.id" :style="elementStyle(el)" class="select-none">
-                    <img
-                        v-if="el.type === 'image'"
-                        :src="el.content"
-                        class="h-full w-full object-cover"
-                        draggable="false"
-                    />
-                    <div v-else>
-                        {{ el.content }}
-                    </div>
-                </div>
-
-                <div
-                    v-if="!page.elements || page.elements.length === 0"
-                    class="absolute inset-0 flex items-center justify-center text-gray-400"
-                >
-                    <p>Esta página está vacía</p>
-                </div>
+            <div
+                v-if="!page.elements || page.elements.length === 0"
+                class="absolute inset-0 flex items-center justify-center"
+                :style="{ color: 'var(--text-dim)' }"
+            >
+                <p>This page is empty</p>
             </div>
         </div>
     </div>

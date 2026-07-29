@@ -18,9 +18,23 @@ class PageController extends BaseController
         private readonly GetUserPagesAction $getUserPagesAction,
     ) {}
 
-    public function editor()
+    public function editor(Request $request)
     {
         $userPages = $this->getUserPagesAction->execute(auth()->id());
+
+        $page = null;
+        if ($uuid = $request->query('uuid')) {
+            $found = $this->getPageAction->byUuid($uuid);
+            if ($found) {
+                $page = [
+                    'id' => $found->getId(),
+                    'uuid' => $found->getUuid(),
+                    'title' => $found->getTitle(),
+                    'slug' => $found->getSlug(),
+                    'elements' => $found->getElements(),
+                ];
+            }
+        }
 
         return Inertia::render('Pages/Views/Editor', [
             'images' => config('editor.images'),
@@ -31,6 +45,7 @@ class PageController extends BaseController
                 'slug' => $p->getSlug(),
                 'updated_at' => $p->getUpdatedAt()?->diffForHumans(),
             ], $userPages),
+            'page' => $page,
         ]);
     }
 
@@ -47,7 +62,7 @@ class PageController extends BaseController
         $page = $this->savePageAction->execute($dto);
 
         return response()->json([
-            'message' => 'Página guardada correctamente',
+            'message' => 'Page saved successfully',
             'page' => [
                 'id' => $page->getId(),
                 'uuid' => $page->getUuid(),
@@ -58,8 +73,11 @@ class PageController extends BaseController
         ]);
     }
 
-    public function show(string $uuid)
+    public function show(Request $request)
     {
+        $uuid = $request->query('uuid');
+        if (!$uuid) abort(404);
+
         $page = $this->getPageAction->byUuid($uuid);
 
         if (!$page) {

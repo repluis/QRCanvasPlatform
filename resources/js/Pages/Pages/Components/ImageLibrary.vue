@@ -9,7 +9,7 @@ defineEmits(['addImageToCanvas'])
 <template>
     <div class="w-64 border-l bg-white p-4">
         <h3 class="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500">
-            Imágenes
+            Images
         </h3>
         <div class="grid grid-cols-2 gap-2">
             <button
@@ -17,7 +17,7 @@ defineEmits(['addImageToCanvas'])
                 :key="img.id"
                 class="group relative overflow-hidden rounded-lg border-2 border-transparent transition hover:border-indigo-400 active:scale-95"
                 @click="$emit('addImageToCanvas', img.url)"
-                :title="'Agregar ' + img.label"
+                :title="'Add ' + img.label"
             >
                 <img
                     :src="img.url"

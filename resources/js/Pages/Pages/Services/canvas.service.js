@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 export async function getEditorData() {
-    const response = await axios.get('/editor')
+    const response = await axios.get('/canvas')
     return response.data
 }
 

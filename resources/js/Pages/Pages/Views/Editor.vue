@@ -1,21 +1,24 @@
 <script setup>
 import { ref } from 'vue'
 import { Head, usePage, router } from '@inertiajs/vue3'
+import { defineOptions } from 'vue'
 import { useCanvas } from '../Composables/useCanvas'
+
+defineOptions({ layout: null })
 import EditorToolbar from '../Components/EditorToolbar.vue'
 import EditorCanvas from '../Components/EditorCanvas.vue'
 import ImageLibrary from '../Components/ImageLibrary.vue'
 import TextPropertiesPanel from '../Components/TextPropertiesPanel.vue'
 import { savePage } from '../Services/canvas.service'
 
-const { images, userPages } = usePage().props
+const { images, userPages, page } = usePage().props
 const saving = ref(false)
 const saved = ref(false)
-const currentUuid = ref('')
-const currentPageId = ref(null)
+const currentUuid = ref(page?.uuid ?? '')
+const currentPageId = ref(page?.id ?? null)
 const showPagesList = ref(true)
 
-const {
+const   {
     elements,
     selectedId,
     selectedElement,
@@ -28,7 +31,7 @@ const {
     bringForward,
     sendBackward,
     clearCanvas,
-} = useCanvas()
+} = useCanvas(page?.elements)
 
 function onMove(id, x, y) {
     updateElement(id, { x, y })
@@ -55,7 +58,7 @@ async function handleSave() {
     saved.value = false
     try {
         const slug = currentUuid.value || 'page-' + Date.now()
-        const data = { title: 'Mi página', elements: elements.value, slug }
+        const data = { title: 'My page', elements: elements.value, slug }
         if (currentPageId.value) {
             data.id = currentPageId.value
         }
@@ -65,7 +68,9 @@ async function handleSave() {
         router.reload({ only: ['userPages'] })
         setTimeout(() => (saved.value = false), 3000)
     } catch (e) {
-        alert('Error al guardar')
+        console.error('Save error:', e)
+        const msg = e?.response?.data?.message || e?.message || 'Error saving page'
+        alert(msg)
     } finally {
         saving.value = false
     }
@@ -73,13 +78,13 @@ async function handleSave() {
 
 function viewPage() {
     if (currentUuid.value) {
-        window.open(`/page/${currentUuid.value}`, '_blank')
+        window.open(`/page?uuid=${currentUuid.value}`, '_blank')
     }
 }
 </script>
 
 <template>
-    <Head title="Editor de Páginas" />
+    <Head title="Page Editor" />
 
     <div class="flex h-screen flex-col bg-gray-50">
         <div class="flex items-center justify-between border-b bg-white px-4">
@@ -97,23 +102,23 @@ function viewPage() {
                     class="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-600 transition hover:bg-gray-50 active:scale-95"
                     @click="showPagesList = !showPagesList"
                 >
-                    {{ showPagesList ? 'Ocultar' : 'Mis páginas' }}
+                    {{ showPagesList ? 'Hide' : 'My pages' }}
                 </button>
                 <button
                     v-if="currentUuid"
                     class="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-600 transition hover:bg-gray-50 active:scale-95"
                     @click="viewPage"
                 >
-                    Vista previa
+                    Preview
                 </button>
                 <button
                     :disabled="saving"
                     class="rounded-lg bg-indigo-600 px-5 py-2 text-sm font-semibold text-white shadow transition hover:bg-indigo-700 active:scale-95 disabled:opacity-50"
                     @click="handleSave"
                 >
-                    <span v-if="saving">Guardando...</span>
-                    <span v-else-if="saved">✓ Guardado</span>
-                    <span v-else>Guardar</span>
+                    <span v-if="saving">Saving...</span>
+                    <span v-else-if="saved">✓ Saved</span>
+                    <span v-else>Save</span>
                 </button>
             </div>
         </div>
@@ -124,12 +129,12 @@ function viewPage() {
                 class="flex w-64 flex-col border-r bg-white"
             >
                 <div class="flex items-center justify-between border-b px-4 py-3">
-                    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">Mis páginas</h3>
+                    <h3 class="text-sm font-semibold text-gray-500 uppercase tracking-wider">My pages</h3>
                     <button
                         class="rounded-lg bg-indigo-500 px-3 py-1.5 text-xs font-medium text-white transition hover:bg-indigo-600"
                         @click="newPage"
                     >
-                        + Nueva
+                        + New
                     </button>
                 </div>
                 <div class="flex-1 overflow-y-auto p-2">
@@ -144,7 +149,7 @@ function viewPage() {
                         <span class="block text-xs text-gray-400 mt-0.5">{{ p.updated_at }}</span>
                     </button>
                     <p v-if="userPages.length === 0" class="px-3 py-6 text-center text-sm text-gray-400">
-                        No tienes páginas aún
+                        You don't have any pages yet
                     </p>
                 </div>
             </div>

@@ -41,7 +41,7 @@ class AuthController extends BaseController
         Auth::login($user);
 
         return response()->json([
-            'message' => 'Usuario registrado correctamente',
+            'message' => 'User registered successfully',
             'user' => [
                 'id' => $user->id,
                 'uuid' => $user->uuid,

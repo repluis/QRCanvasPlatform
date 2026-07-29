@@ -25,6 +25,7 @@ class SavePageAction
                 title: $dto->title,
                 elements: $dto->elements,
                 slug: $dto->slug,
+                uuid: $existing->getUuid(),
                 userId: $dto->userId ?? $existing->getUserId(),
             );
         } else {

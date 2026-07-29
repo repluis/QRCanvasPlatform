@@ -16,12 +16,12 @@ function emitChange(field, value) {
 <template>
     <div v-if="element && element.type === 'text'" class="w-64 border-l bg-white p-4">
         <h3 class="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500">
-            Propiedades de texto
+            Text properties
         </h3>
 
         <div class="space-y-3">
             <div>
-                <label class="mb-1 block text-xs text-gray-400">Contenido</label>
+                <label class="mb-1 block text-xs text-gray-400">Content</label>
                 <input
                     :value="element.content"
                     class="w-full rounded-lg border px-3 py-2 text-sm outline-none transition focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400"
@@ -30,7 +30,7 @@ function emitChange(field, value) {
             </div>
 
             <div>
-                <label class="mb-1 block text-xs text-gray-400">Tamaño</label>
+                <label class="mb-1 block text-xs text-gray-400">Size</label>
                 <input
                     :value="element.fontSize"
                     type="range"
@@ -53,7 +53,7 @@ function emitChange(field, value) {
             </div>
 
             <div>
-                <label class="mb-1 block text-xs text-gray-400">Estilo</label>
+                <label class="mb-1 block text-xs text-gray-400">Style</label>
                 <div class="flex gap-2">
                     <button
                         class="rounded-lg border px-3 py-1.5 text-sm transition hover:bg-gray-100"

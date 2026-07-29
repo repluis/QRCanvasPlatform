@@ -2,8 +2,14 @@ import { ref, computed } from 'vue'
 
 let nextId = 1
 
-export function useCanvas() {
-    const elements = ref([])
+function syncNextId(elements) {
+    const max = elements.reduce((m, e) => Math.max(m, Number(e.id) || 0), 0)
+    if (max >= nextId) nextId = max + 1
+}
+
+export function useCanvas(initialElements) {
+    const elements = ref(initialElements ?? [])
+    if (initialElements?.length) syncNextId(initialElements)
     const selectedId = ref(null)
 
     const selectedElement = computed(() =>
@@ -48,7 +54,7 @@ export function useCanvas() {
     }
 
     function select(id) {
-        selectedId.value = selectedId.value === id ? null : id
+        selectedId.value = id
     }
 
     function updateElement(id, props) {

@@ -43,7 +43,7 @@ function onMove(id, x, y) {
                     <svg class="mx-auto h-12 w-12 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                     </svg>
-                    <p class="text-sm">Agrega texto o imágenes desde la barra superior</p>
+                    <p class="text-sm">Add text or images from the toolbar</p>
                 </div>
             </div>
         </div>
