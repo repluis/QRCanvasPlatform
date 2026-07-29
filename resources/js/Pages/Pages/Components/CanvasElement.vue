@@ -7,7 +7,7 @@ const props = defineProps({
     isSelected: { type: Boolean, default: false },
 })
 
-const emit = defineEmits(['select', 'move', 'update'])
+const emit = defineEmits(['select', 'move', 'update', 'remove'])
 
 const dragging = ref(false)
 const dragStart = ref({ x: 0, y: 0 })
