@@ -1,20 +1,10 @@
 <script setup>
-import { computed, ref, defineOptions } from 'vue'
-import { Head, usePage, router } from '@inertiajs/vue3'
+import { computed, defineOptions } from 'vue'
+import { Head, usePage } from '@inertiajs/vue3'
 
 defineOptions({ layout: null })
 
 const { page } = usePage().props
-
-const isPrinting = ref(false)
-
-function doPrint() {
-    isPrinting.value = true
-    setTimeout(() => {
-        window.print()
-        setTimeout(() => { isPrinting.value = false }, 500)
-    }, 100)
-}
 
 const canvases = computed(() => {
     if (page.canvases?.length) return page.canvases
@@ -66,23 +56,7 @@ function elementStyle(el) {
     <Head :title="page.title" />
 
     <div class="flex min-h-screen flex-col items-center gap-6 overflow-hidden p-4 print:gap-4 print:p-2" :style="{ backgroundColor: 'var(--bg)', paddingTop: '2rem' }">
-        <div v-if="!isPrinting" class="flex gap-3 print:hidden">
-            <button
-                class="rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow transition hover:bg-indigo-700 active:scale-95"
-                @click="doPrint"
-            >
-                <svg class="mr-1.5 inline-block h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
-                </svg>
-                Imprimir / Guardar PDF
-            </button>
-            <button
-                class="rounded-lg border border-gray-300 px-5 py-2.5 text-sm font-medium text-gray-600 transition hover:bg-gray-50 active:scale-95"
-                @click="router.visit('/canvas?uuid=' + page.uuid)"
-            >
-                Editar
-            </button>
-        </div>
+
 
         <div
             v-for="(canvas, ci) in visibleCanvases"
