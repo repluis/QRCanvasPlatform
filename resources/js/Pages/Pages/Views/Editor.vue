@@ -12,6 +12,25 @@ import TextPropertiesPanel from '../Components/TextPropertiesPanel.vue'
 import { savePage } from '../Services/canvas.service'
 
 const { images, userPages, page } = usePage().props
+
+const LOVE_PHRASES = [
+    'Te amo',
+    'Eres mi todo',
+    'Mi amor eterno',
+    'Siempre juntos',
+    'Corazón mío',
+    'Eres mi vida',
+    'Te quiero',
+    'Para siempre',
+    'Mi media naranja',
+    'Amor infinito',
+    'Eres única',
+    'Contigo siempre',
+    'Mi razón de ser',
+    'Te adoro',
+    'Eres mi sol',
+]
+
 const saving = ref(false)
 const saved = ref(false)
 const currentUuid = ref(page?.uuid ?? '')
@@ -19,11 +38,16 @@ const currentPageId = ref(page?.id ?? null)
 const showPagesList = ref(true)
 
 const   {
+    canvases,
+    activeIndex,
     elements,
+    background,
     selectedId,
     selectedElement,
+    SHAPES,
     addText,
     addImage,
+    addShape,
     removeSelected,
     select,
     updateElement,
@@ -31,7 +55,11 @@ const   {
     bringForward,
     sendBackward,
     clearCanvas,
-} = useCanvas(page?.elements)
+    setBackground,
+    addCanvas,
+    removeCanvas,
+    switchCanvas,
+} = useCanvas(page?.canvases)
 
 function onMove(id, x, y) {
     updateElement(id, { x, y })
@@ -42,15 +70,18 @@ function onDeselect() {
 }
 
 function loadPage(page) {
-    currentUuid.value = page.uuid
-    currentPageId.value = page.id
-    elements.value = page.elements || []
+    router.visit('/editor', {
+        method: 'get',
+        data: { uuid: page.uuid },
+        preserveScroll: true,
+    })
 }
 
 function newPage() {
     currentUuid.value = ''
     currentPageId.value = null
-    elements.value = []
+    canvases.value = [{ elements: [], background: '#ffffff' }]
+    activeIndex.value = 0
 }
 
 async function handleSave() {
@@ -58,7 +89,14 @@ async function handleSave() {
     saved.value = false
     try {
         const slug = currentUuid.value || 'page-' + Date.now()
-        const data = { title: 'My page', elements: elements.value, slug }
+        const data = {
+            title: 'My page',
+            canvases: canvases.value.map(c => ({
+                elements: c.elements,
+                background: c.background,
+            })),
+            slug,
+        }
         if (currentPageId.value) {
             data.id = currentPageId.value
         }
@@ -91,8 +129,10 @@ function viewPage() {
             <EditorToolbar
                 :has-selection="!!selectedId"
                 :selected-type="selectedElement?.type ?? null"
+                :shapes="SHAPES"
                 @add-text="addText"
                 @add-image="addImage"
+                @add-shape="addShape"
                 @remove="removeSelected"
                 @bring-forward="bringForward(selectedId)"
                 @send-backward="sendBackward(selectedId)"
@@ -154,22 +194,68 @@ function viewPage() {
                 </div>
             </div>
 
-            <EditorCanvas
-                :elements="elements"
-                :selected-id="selectedId"
-                @select="select"
-                @move="onMove"
-                @remove="removeSelected"
-                @deselect="onDeselect"
-            />
+            <div class="flex flex-1 flex-col overflow-hidden">
+                <div class="flex items-center gap-1 border-b bg-gray-100 px-3 py-1">
+                    <button
+                        v-for="(c, i) in canvases"
+                        :key="i"
+                        class="flex items-center gap-1 rounded-t-lg px-4 py-2 text-xs font-medium transition"
+                        :class="i === activeIndex
+                            ? 'bg-white text-indigo-700 shadow-sm'
+                            : 'text-gray-500 hover:bg-gray-200'"
+                        @click="switchCanvas(i)"
+                    >
+                        <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                        </svg>
+                        Canvas {{ i + 1 }}
+                    </button>
+
+                    <button
+                        class="ml-1 flex h-7 w-7 items-center justify-center rounded-full text-gray-400 transition hover:bg-gray-300 hover:text-gray-700"
+                        title="Add canvas"
+                        @click="addCanvas"
+                    >
+                        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                        </svg>
+                    </button>
+
+                    <div class="ml-auto flex items-center gap-1">
+                        <button
+                            v-if="canvases.length > 1"
+                            class="rounded px-2 py-1 text-xs text-red-400 transition hover:bg-red-50 hover:text-red-600"
+                            @click="removeCanvas(activeIndex)"
+                        >
+                            Delete
+                        </button>
+                    </div>
+                </div>
+
+                <EditorCanvas
+                    :key="activeIndex"
+                    :elements="elements"
+                    :selected-id="selectedId"
+                    :background="background"
+                    @select="select"
+                    @move="onMove"
+                    @remove="removeSelected"
+                    @deselect="onDeselect"
+                />
+            </div>
 
             <ImageLibrary
                 :images="images"
+                :shapes="SHAPES"
+                :phrases="LOVE_PHRASES"
                 @add-image-to-canvas="addImage"
+                @add-shape="addShape"
+                @add-text="addText"
+                @set-background="setBackground"
             />
 
             <TextPropertiesPanel
-                v-if="selectedElement?.type === 'text'"
+                v-if="selectedElement?.type === 'text' || selectedElement?.type === 'shape'"
                 :element="selectedElement"
                 @update="(id, props) => updateElement(id, props)"
             />

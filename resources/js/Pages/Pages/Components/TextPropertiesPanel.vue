@@ -1,6 +1,4 @@
 <script setup>
-import { watch } from 'vue'
-
 const props = defineProps({
     element: { type: Object, default: null },
 })
@@ -14,13 +12,13 @@ function emitChange(field, value) {
 </script>
 
 <template>
-    <div v-if="element && element.type === 'text'" class="w-64 border-l bg-white p-4">
+    <div v-if="element" class="w-64 border-l bg-white p-4">
         <h3 class="mb-3 text-sm font-semibold uppercase tracking-wider text-gray-500">
-            Text properties
+            {{ element.type === 'shape' ? 'Shape properties' : 'Text properties' }}
         </h3>
 
         <div class="space-y-3">
-            <div>
+            <div v-if="element.type === 'text'">
                 <label class="mb-1 block text-xs text-gray-400">Content</label>
                 <input
                     :value="element.content"
@@ -29,7 +27,7 @@ function emitChange(field, value) {
                 />
             </div>
 
-            <div>
+            <div v-if="element.type === 'text'">
                 <label class="mb-1 block text-xs text-gray-400">Size</label>
                 <input
                     :value="element.fontSize"
@@ -42,6 +40,39 @@ function emitChange(field, value) {
                 <span class="text-xs text-gray-400">{{ element.fontSize }}px</span>
             </div>
 
+            <div v-if="element.type === 'shape'">
+                <label class="mb-1 block text-xs text-gray-400">Shape</label>
+                <p class="text-sm font-medium capitalize" :style="{ color: 'var(--text)' }">
+                    {{ element.shape }}
+                </p>
+            </div>
+
+            <div v-if="element.type === 'shape'">
+                <label class="mb-1 block text-xs text-gray-400">Width</label>
+                <input
+                    :value="element.width"
+                    type="range"
+                    min="40"
+                    max="300"
+                    class="w-full"
+                    @input="emitChange('width', Number($event.target.value))"
+                />
+                <span class="text-xs text-gray-400">{{ element.width }}px</span>
+            </div>
+
+            <div v-if="element.type === 'shape'">
+                <label class="mb-1 block text-xs text-gray-400">Height</label>
+                <input
+                    :value="element.height"
+                    type="range"
+                    min="40"
+                    max="300"
+                    class="w-full"
+                    @input="emitChange('height', Number($event.target.value))"
+                />
+                <span class="text-xs text-gray-400">{{ element.height }}px</span>
+            </div>
+
             <div>
                 <label class="mb-1 block text-xs text-gray-400">Color</label>
                 <input
@@ -52,7 +83,7 @@ function emitChange(field, value) {
                 />
             </div>
 
-            <div>
+            <div v-if="element.type === 'text'">
                 <label class="mb-1 block text-xs text-gray-400">Style</label>
                 <div class="flex gap-2">
                     <button

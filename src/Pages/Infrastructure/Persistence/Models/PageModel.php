@@ -17,6 +17,8 @@ class PageModel extends Model
     protected $fillable = [
         'title',
         'elements',
+        'canvases',
+        'background',
         'slug',
         'uuid',
         'user_id',
@@ -24,6 +26,7 @@ class PageModel extends Model
 
     protected $casts = [
         'elements' => 'array',
+        'canvases' => 'array',
     ];
 
     public function user(): BelongsTo
@@ -36,7 +39,9 @@ class PageModel extends Model
         return new Page(
             id: $this->id,
             title: $this->title,
-            elements: $this->elements,
+            elements: $this->elements ?? [],
+            canvases: $this->canvases ?? null,
+            background: $this->background ?? '#ffffff',
             slug: $this->slug,
             uuid: $this->uuid,
             userId: $this->user_id,
@@ -53,6 +58,8 @@ class PageModel extends Model
 
         $model->title = $page->getTitle();
         $model->elements = $page->getElements();
+        $model->canvases = $page->hasCanvases() ? $page->getCanvases() : null;
+        $model->background = $page->getBackground();
         $model->slug = $page->getSlug();
         $model->uuid = $page->getUuid();
         $model->user_id = $page->getUserId();

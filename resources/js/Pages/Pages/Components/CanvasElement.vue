@@ -21,6 +21,32 @@ const style = computed(() => ({
     cursor: dragging.value ? 'grabbing' : 'grab',
 }))
 
+const shapeViewBox = computed(() => {
+    const s = props.element.shape
+    if (s === 'heart') return '0 0 24 24'
+    if (s === 'star') return '0 0 24 24'
+    if (s === 'circle') return '0 0 24 24'
+    if (s === 'moon') return '0 0 24 24'
+    if (s === 'diamond') return '0 0 24 24'
+    if (s === 'triangle') return '0 0 24 24'
+    if (s === 'hexagon') return '0 0 24 24'
+    if (s === 'cloud') return '0 0 24 24'
+    return '0 0 24 24'
+})
+
+const shapePath = computed(() => {
+    const s = props.element.shape
+    if (s === 'heart') return 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z'
+    if (s === 'star') return 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z'
+    if (s === 'circle') return 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z'
+    if (s === 'moon') return 'M12 3a9 9 0 109 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 01-4.4 2.26 5.403 5.403 0 01-3.14-9.8c-.44-.06-.9-.1-1.36-.1z'
+    if (s === 'diamond') return 'M12 2L2 12l10 10 10-10L12 2z'
+    if (s === 'triangle') return 'M12 2L2 22h20L12 2z'
+    if (s === 'hexagon') return 'M12 2l8.66 5v10L12 22l-8.66-5V7L12 2z'
+    if (s === 'cloud') return 'M19.35 10.04A7.49 7.49 0 0012 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 000 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z'
+    return ''
+})
+
 function onMouseDown(e) {
     e.stopPropagation()
     emit('select', props.element.id)
@@ -61,6 +87,15 @@ function onMouseDown(e) {
             class="h-full w-full rounded object-cover pointer-events-none"
             draggable="false"
         />
+        <svg
+            v-else-if="element.type === 'shape'"
+            class="h-full w-full pointer-events-none"
+            :viewBox="shapeViewBox"
+            :style="{ color: element.color }"
+            fill="currentColor"
+        >
+            <path :d="shapePath" />
+        </svg>
         <div
             v-else
             class="flex h-full w-full items-center justify-center rounded px-2 pointer-events-none"

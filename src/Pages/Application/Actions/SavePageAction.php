@@ -24,6 +24,8 @@ class SavePageAction
                 id: $existing->getId(),
                 title: $dto->title,
                 elements: $dto->elements,
+                canvases: $dto->canvases,
+                background: $dto->background,
                 slug: $dto->slug,
                 uuid: $existing->getUuid(),
                 userId: $dto->userId ?? $existing->getUserId(),
@@ -32,6 +34,8 @@ class SavePageAction
             $page = new Page(
                 title: $dto->title,
                 elements: $dto->elements,
+                canvases: $dto->canvases,
+                background: $dto->background,
                 slug: $dto->slug,
                 userId: $dto->userId,
             );

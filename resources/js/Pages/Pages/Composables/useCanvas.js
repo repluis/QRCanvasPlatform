@@ -7,25 +7,43 @@ function syncNextId(elements) {
     if (max >= nextId) nextId = max + 1
 }
 
-export function useCanvas(initialElements) {
-    const elements = ref(initialElements ?? [])
-    if (initialElements?.length) syncNextId(initialElements)
+const SHAPES = ['heart', 'star', 'circle', 'moon', 'diamond', 'triangle', 'hexagon', 'cloud']
+
+function createCanvas() {
+    return { elements: [], background: '#ffffff' }
+}
+
+export function useCanvas(initialCanvases) {
+    const canvases = ref(initialCanvases && initialCanvases.length
+        ? initialCanvases.map(c => ({ elements: [...c.elements], background: c.background }))
+        : [createCanvas()]
+    )
+
+    if (canvases.value[0]?.elements?.length) syncNextId(canvases.value[0].elements)
+
+    const activeIndex = ref(0)
+
+    const activeCanvas = computed(() => canvases.value[activeIndex.value])
+
+    const elements = computed(() => activeCanvas.value?.elements ?? [])
+    const background = computed(() => activeCanvas.value?.background ?? '#ffffff')
+
     const selectedId = ref(null)
 
     const selectedElement = computed(() =>
         elements.value.find((el) => el.id === selectedId.value) ?? null
     )
 
-    function addText() {
+    function addText(content) {
         const id = String(nextId++)
-        elements.value.push({
+        canvases.value[activeIndex.value].elements.push({
             id,
             type: 'text',
             x: 50 + (elements.value.length * 20) % 300,
             y: 50 + (elements.value.length * 20) % 300,
             width: 200,
             height: 40,
-            content: 'Texto',
+            content: content || 'Texto',
             fontSize: 20,
             fontWeight: 'normal',
             color: '#1f2937',
@@ -35,7 +53,7 @@ export function useCanvas(initialElements) {
 
     function addImage(url) {
         const id = String(nextId++)
-        elements.value.push({
+        canvases.value[activeIndex.value].elements.push({
             id,
             type: 'image',
             x: 50 + (elements.value.length * 30) % 300,
@@ -47,9 +65,24 @@ export function useCanvas(initialElements) {
         selectedId.value = id
     }
 
+    function addShape(shape) {
+        const id = String(nextId++)
+        canvases.value[activeIndex.value].elements.push({
+            id,
+            type: 'shape',
+            shape,
+            x: 50 + (elements.value.length * 30) % 300,
+            y: 50 + (elements.value.length * 30) % 300,
+            width: 120,
+            height: 120,
+            color: '#ef4444',
+        })
+        selectedId.value = id
+    }
+
     function removeSelected() {
         if (!selectedId.value) return
-        elements.value = elements.value.filter((el) => el.id !== selectedId.value)
+        canvases.value[activeIndex.value].elements = elements.value.filter((el) => el.id !== selectedId.value)
         selectedId.value = null
     }
 
@@ -71,32 +104,65 @@ export function useCanvas(initialElements) {
     }
 
     function bringForward(id) {
-        const idx = elements.value.findIndex((e) => e.id === id)
-        if (idx < elements.value.length - 1) {
-            const el = elements.value.splice(idx, 1)[0]
-            elements.value.splice(idx + 1, 0, el)
+        const arr = canvases.value[activeIndex.value].elements
+        const idx = arr.findIndex((e) => e.id === id)
+        if (idx < arr.length - 1) {
+            const el = arr.splice(idx, 1)[0]
+            arr.splice(idx + 1, 0, el)
         }
     }
 
     function sendBackward(id) {
-        const idx = elements.value.findIndex((e) => e.id === id)
+        const arr = canvases.value[activeIndex.value].elements
+        const idx = arr.findIndex((e) => e.id === id)
         if (idx > 0) {
-            const el = elements.value.splice(idx, 1)[0]
-            elements.value.splice(idx - 1, 0, el)
+            const el = arr.splice(idx, 1)[0]
+            arr.splice(idx - 1, 0, el)
         }
     }
 
     function clearCanvas() {
-        elements.value = []
+        canvases.value[activeIndex.value].elements = []
         selectedId.value = null
     }
 
+    function setBackground(value) {
+        canvases.value[activeIndex.value].background = value
+    }
+
+    function addCanvas() {
+        canvases.value.push(createCanvas())
+        activeIndex.value = canvases.value.length - 1
+        selectedId.value = null
+    }
+
+    function removeCanvas(index) {
+        if (canvases.value.length <= 1) return
+        canvases.value.splice(index, 1)
+        if (activeIndex.value >= canvases.value.length) {
+            activeIndex.value = canvases.value.length - 1
+        }
+        selectedId.value = null
+    }
+
+    function switchCanvas(index) {
+        if (index >= 0 && index < canvases.value.length) {
+            activeIndex.value = index
+            selectedId.value = null
+        }
+    }
+
     return {
+        canvases,
+        activeIndex,
         elements,
+        background,
         selectedId,
         selectedElement,
+        SHAPES,
         addText,
         addImage,
+        addShape,
         removeSelected,
         select,
         updateElement,
@@ -104,5 +170,9 @@ export function useCanvas(initialElements) {
         bringForward,
         sendBackward,
         clearCanvas,
+        setBackground,
+        addCanvas,
+        removeCanvas,
+        switchCanvas,
     }
 }

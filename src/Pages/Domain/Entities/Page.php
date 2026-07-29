@@ -10,6 +10,8 @@ class Page extends Entity
         ?int $id = null,
         private string $title = 'Sin título',
         private array $elements = [],
+        private ?array $canvases = null,
+        private string $background = '#ffffff',
         private ?string $slug = null,
         private ?string $uuid = null,
         private ?int $userId = null,
@@ -27,6 +29,21 @@ class Page extends Entity
     public function getElements(): array
     {
         return $this->elements;
+    }
+
+    public function getCanvases(): array
+    {
+        return $this->canvases ?? [];
+    }
+
+    public function hasCanvases(): bool
+    {
+        return !empty($this->canvases);
+    }
+
+    public function getBackground(): string
+    {
+        return $this->background;
     }
 
     public function getSlug(): string

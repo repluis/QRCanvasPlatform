@@ -18,6 +18,27 @@ class PageController extends BaseController
         private readonly GetUserPagesAction $getUserPagesAction,
     ) {}
 
+    private function buildPageResponse($found): array
+    {
+        $response = [
+            'id' => $found->getId(),
+            'uuid' => $found->getUuid(),
+            'title' => $found->getTitle(),
+            'slug' => $found->getSlug(),
+        ];
+
+        if ($found->hasCanvases()) {
+            $response['canvases'] = $found->getCanvases();
+        } else {
+            $response['canvases'] = [[
+                'elements' => $found->getElements(),
+                'background' => $found->getBackground(),
+            ]];
+        }
+
+        return $response;
+    }
+
     public function editor(Request $request)
     {
         $userPages = $this->getUserPagesAction->execute(auth()->id());
@@ -26,13 +47,7 @@ class PageController extends BaseController
         if ($uuid = $request->query('uuid')) {
             $found = $this->getPageAction->byUuid($uuid);
             if ($found) {
-                $page = [
-                    'id' => $found->getId(),
-                    'uuid' => $found->getUuid(),
-                    'title' => $found->getTitle(),
-                    'slug' => $found->getSlug(),
-                    'elements' => $found->getElements(),
-                ];
+                $page = $this->buildPageResponse($found);
             }
         }
 
@@ -54,7 +69,9 @@ class PageController extends BaseController
         $dto = new SavePageDTO(
             title: $request->input('title', 'Sin título'),
             elements: $request->input('elements', []),
+            canvases: $request->input('canvases', []),
             slug: $request->input('slug', 'page-' . uniqid()),
+            background: $request->input('background', '#ffffff'),
             id: $request->integer('id', null) ?: null,
             userId: auth()->id(),
         );
@@ -63,13 +80,7 @@ class PageController extends BaseController
 
         return response()->json([
             'message' => 'Page saved successfully',
-            'page' => [
-                'id' => $page->getId(),
-                'uuid' => $page->getUuid(),
-                'title' => $page->getTitle(),
-                'slug' => $page->getSlug(),
-                'elements' => $page->getElements(),
-            ],
+            'page' => $this->buildPageResponse($page),
         ]);
     }
 
@@ -85,13 +96,7 @@ class PageController extends BaseController
         }
 
         return Inertia::render('Pages/Views/Show', [
-            'page' => [
-                'id' => $page->getId(),
-                'uuid' => $page->getUuid(),
-                'title' => $page->getTitle(),
-                'elements' => $page->getElements(),
-                'slug' => $page->getSlug(),
-            ],
+            'page' => $this->buildPageResponse($page),
         ]);
     }
 }
