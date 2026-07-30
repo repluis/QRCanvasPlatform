@@ -1,0 +1,197 @@
+<?php
+
+namespace Src\Pages\Domain\Templates\Presets;
+
+use Src\Pages\Domain\Templates\PageTemplate;
+
+/**
+ * "Propuesta de Noviazgo" — a sweet dating-proposal composition.
+ *
+ * Hidden card 1 is the QR business card; visible cards 2-5 carry the
+ * romantic content shown to whoever scans the QR.
+ */
+class DatingProposalTemplate implements PageTemplate
+{
+    public function id(): string { return 'dating-proposal'; }
+    public function name(): string { return 'Propuesta de Noviazgo 💕'; }
+    public function description(): string { return 'Pregúntale a esa persona especial si quiere dar el primer paso contigo.'; }
+    public function emoji(): string { return '💕'; }
+    public function defaultTitle(): string { return 'Propuesta de Noviazgo 💕'; }
+
+    public function canvases(): array
+    {
+        // Card 2 — Title
+        $card2 = [
+            'background' => '#ffe4e6',
+            'width' => 800,
+            'height' => 600,
+            'visible' => true,
+            'elements' => [
+                ['id' => '2-1', 'type' => 'text',
+                 'x' => 50, 'y' => 80, 'width' => 700, 'height' => 80,
+                 'content' => '¿Quieres ser mi novia?',
+                 'fontSize' => 56, 'fontWeight' => 'bold',
+                 'fontStyle' => 'normal', 'textDecoration' => 'none',
+                 'textAlign' => 'center', 'fontFamily' => 'Georgia, serif',
+                 'color' => '#be185d'],
+                ['id' => '2-2', 'type' => 'text',
+                 'x' => 100, 'y' => 200, 'width' => 600, 'height' => 50,
+                 'content' => 'Una pregunta que cambiará todo... 💕',
+                 'fontSize' => 22, 'fontWeight' => 'normal',
+                 'fontStyle' => 'italic', 'textDecoration' => 'none',
+                 'textAlign' => 'center', 'fontFamily' => 'sans-serif',
+                 'color' => '#831843'],
+                ['id' => '2-3', 'type' => 'shape', 'shape' => 'heart',
+                 'x' => 350, 'y' => 290, 'width' => 100, 'height' => 100,
+                 'color' => '#ef4444'],
+                ['id' => '2-4', 'type' => 'shape', 'shape' => 'heart',
+                 'x' => 230, 'y' => 320, 'width' => 60, 'height' => 60,
+                 'color' => '#fb7185'],
+                ['id' => '2-5', 'type' => 'shape', 'shape' => 'heart',
+                 'x' => 510, 'y' => 320, 'width' => 60, 'height' => 60,
+                 'color' => '#fb7185'],
+                ['id' => '2-6', 'type' => 'shape', 'shape' => 'lightning',
+                 'x' => 180, 'y' => 220, 'width' => 30, 'height' => 30,
+                 'color' => '#f59e0b'],
+                ['id' => '2-7', 'type' => 'shape', 'shape' => 'lightning',
+                 'x' => 590, 'y' => 220, 'width' => 30, 'height' => 30,
+                 'color' => '#f59e0b'],
+            ],
+        ];
+
+        // Card 3 — Reasons
+        $card3 = [
+            'background' => '#fff1f2',
+            'width' => 800,
+            'height' => 600,
+            'visible' => true,
+            'elements' => [
+                ['id' => '3-1', 'type' => 'text',
+                 'x' => 50, 'y' => 60, 'width' => 700, 'height' => 60,
+                 'content' => 'Por qué tú... 💭',
+                 'fontSize' => 40, 'fontWeight' => 'bold',
+                 'fontStyle' => 'normal', 'textDecoration' => 'none',
+                 'textAlign' => 'center', 'fontFamily' => 'Georgia, serif',
+                 'color' => '#9d174d'],
+                ['id' => '3-2', 'type' => 'text',
+                 'x' => 80, 'y' => 160, 'width' => 640, 'height' => 90,
+                 'content' => 'Tu sonrisa ilumina mis días y tu voz hace que todo a mi alrededor se detenga por un instante.',
+                 'fontSize' => 20, 'fontWeight' => 'normal',
+                 'fontStyle' => 'normal', 'textDecoration' => 'none',
+                 'textAlign' => 'center', 'fontFamily' => 'sans-serif',
+                 'color' => '#831843'],
+                ['id' => '3-3', 'type' => 'shape', 'shape' => 'star',
+                 'x' => 150, 'y' => 80, 'width' => 50, 'height' => 50,
+                 'color' => '#fbbf24'],
+                ['id' => '3-4', 'type' => 'shape', 'shape' => 'star',
+                 'x' => 600, 'y' => 80, 'width' => 50, 'height' => 50,
+                 'color' => '#fbbf24'],
+                ['id' => '3-5', 'type' => 'shape', 'shape' => 'heart',
+                 'x' => 370, 'y' => 480, 'width' => 60, 'height' => 60,
+                 'color' => '#ef4444'],
+                ['id' => '3-6', 'type' => 'text',
+                 'x' => 100, 'y' => 300, 'width' => 600, 'height' => 80,
+                 'content' => 'Contigo aprendí que el amor verdadero no se busca, se siente.',
+                 'fontSize' => 22, 'fontWeight' => 'normal',
+                 'fontStyle' => 'italic', 'textDecoration' => 'none',
+                 'textAlign' => 'center', 'fontFamily' => 'Georgia, serif',
+                 'color' => '#be185d'],
+                ['id' => '3-7', 'type' => 'text',
+                 'x' => 100, 'y' => 400, 'width' => 600, 'height' => 60,
+                 'content' => 'Y quiero pasar el resto de mis días a tu lado. ✨',
+                 'fontSize' => 18, 'fontWeight' => 'normal',
+                 'fontStyle' => 'normal', 'textDecoration' => 'none',
+                 'textAlign' => 'center', 'fontFamily' => 'sans-serif',
+                 'color' => '#831843'],
+            ],
+        ];
+
+        // Card 4 — Romantic quote
+        $card4 = [
+            'background' => '#ffe4e6',
+            'width' => 800,
+            'height' => 600,
+            'visible' => true,
+            'elements' => [
+                ['id' => '4-1', 'type' => 'text',
+                 'x' => 50, 'y' => 80, 'width' => 700, 'height' => 80,
+                 'content' => 'Mi corazón te eligió 💗',
+                 'fontSize' => 36, 'fontWeight' => 'bold',
+                 'fontStyle' => 'normal', 'textDecoration' => 'none',
+                 'textAlign' => 'center', 'fontFamily' => 'Georgia, serif',
+                 'color' => '#9d174d'],
+                ['id' => '4-2', 'type' => 'text',
+                 'x' => 80, 'y' => 200, 'width' => 640, 'height' => 240,
+                 'content' => '"Eres la casualidad más hermosa que llegó a mi vida. Cada latido de mi corazón lleva tu nombre, cada pensamiento me lleva a ti. No imaginas lo completo que me haces sentir."',
+                 'fontSize' => 19, 'fontWeight' => 'normal',
+                 'fontStyle' => 'italic', 'textDecoration' => 'none',
+                 'textAlign' => 'center', 'fontFamily' => 'Georgia, serif',
+                 'color' => '#831843'],
+                ['id' => '4-3', 'type' => 'shape', 'shape' => 'heart',
+                 'x' => 360, 'y' => 450, 'width' => 80, 'height' => 80,
+                 'color' => '#be185d'],
+                ['id' => '4-4', 'type' => 'shape', 'shape' => 'heart',
+                 'x' => 230, 'y' => 460, 'width' => 40, 'height' => 40,
+                 'color' => '#fb7185'],
+                ['id' => '4-5', 'type' => 'shape', 'shape' => 'heart',
+                 'x' => 530, 'y' => 460, 'width' => 40, 'height' => 40,
+                 'color' => '#fb7185'],
+            ],
+        ];
+
+        // Card 5 — Final question
+        $card5 = [
+            'background' => '#fff5f7',
+            'width' => 800,
+            'height' => 600,
+            'visible' => true,
+            'elements' => [
+                ['id' => '5-1', 'type' => 'text',
+                 'x' => 50, 'y' => 60, 'width' => 700, 'height' => 80,
+                 'content' => 'Y entonces...',
+                 'fontSize' => 32, 'fontWeight' => 'normal',
+                 'fontStyle' => 'italic', 'textDecoration' => 'none',
+                 'textAlign' => 'center', 'fontFamily' => 'Georgia, serif',
+                 'color' => '#831843'],
+                ['id' => '5-2', 'type' => 'text',
+                 'x' => 50, 'y' => 160, 'width' => 700, 'height' => 100,
+                 'content' => '¿Quieres ser mi novia?',
+                 'fontSize' => 52, 'fontWeight' => 'bold',
+                 'fontStyle' => 'normal', 'textDecoration' => 'none',
+                 'textAlign' => 'center', 'fontFamily' => 'Georgia, serif',
+                 'color' => '#be185d'],
+                ['id' => '5-3', 'type' => 'shape', 'shape' => 'heart',
+                 'x' => 320, 'y' => 280, 'width' => 160, 'height' => 160,
+                 'color' => '#ef4444'],
+                ['id' => '5-4', 'type' => 'text',
+                 'x' => 50, 'y' => 460, 'width' => 700, 'height' => 50,
+                 'content' => 'Espero tu respuesta... 💌',
+                 'fontSize' => 22, 'fontWeight' => 'normal',
+                 'fontStyle' => 'italic', 'textDecoration' => 'none',
+                 'textAlign' => 'center', 'fontFamily' => 'Georgia, serif',
+                 'color' => '#831843'],
+                ['id' => '5-5', 'type' => 'shape', 'shape' => 'check',
+                 'x' => 250, 'y' => 530, 'width' => 30, 'height' => 30,
+                 'color' => '#22c55e'],
+                ['id' => '5-6', 'type' => 'shape', 'shape' => 'check',
+                 'x' => 520, 'y' => 530, 'width' => 30, 'height' => 30,
+                 'color' => '#22c55e'],
+            ],
+        ];
+
+        return [
+            // Card 1 — Hidden QR business card (filled by registry)
+            [
+                'background' => '#fff5f7',
+                'width' => 400,
+                'height' => 600,
+                'visible' => false,
+                'elements' => [],
+            ],
+            $card2,
+            $card3,
+            $card4,
+            $card5,
+        ];
+    }
+}

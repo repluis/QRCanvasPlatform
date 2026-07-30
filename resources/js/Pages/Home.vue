@@ -1,4 +1,5 @@
 <script setup>
+import { ref, onMounted } from 'vue'
 import { Head, Link, usePage, router } from '@inertiajs/vue3'
 
 const { userPages } = usePage().props
@@ -6,6 +7,44 @@ const user = usePage().props.auth?.user
 
 function navigateToCanvas() {
     router.visit('/canvas')
+}
+
+const templates = ref([])
+const loadingTemplate = ref(null)
+
+onMounted(async () => {
+    try {
+        const res = await fetch('/templates', { headers: { 'Accept': 'application/json' } })
+        const json = await res.json()
+        templates.value = json.templates ?? []
+    } catch (e) {
+        console.error('[Home] failed to load templates', e)
+    }
+})
+
+async function useTemplate(template) {
+    loadingTemplate.value = template.id
+    try {
+        const res = await fetch(`/pages/from-template/${template.id}`, {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'X-Requested-With': 'XMLHttpRequest',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '',
+            },
+        })
+        const json = await res.json()
+        if (res.ok && json.page?.uuid) {
+            router.visit('/canvas?uuid=' + json.page.uuid)
+        } else {
+            alert(json.error || 'Error creating page from template')
+        }
+    } catch (e) {
+        console.error('[Home] template instantiate failed', e)
+        alert('Error creating page from template')
+    } finally {
+        loadingTemplate.value = null
+    }
 }
 </script>
 
@@ -25,6 +64,63 @@ function navigateToCanvas() {
             </p>
         </div>
 
+        <!-- Templates section (global, visible to all users) -->
+        <div class="mb-12">
+            <div class="mb-6 flex items-center justify-between">
+                <div>
+                    <h2
+                        class="text-xl font-semibold"
+                        :style="{ color: 'var(--text)' }"
+                    >
+                        Templates ✨
+                    </h2>
+                    <p class="mt-1 text-sm" :style="{ color: 'var(--text-muted)' }">
+                        Empieza rápido con una composición prediseñada — edítala a tu gusto.
+                    </p>
+                </div>
+            </div>
+
+            <div v-if="templates.length > 0" class="grid gap-4 sm:grid-cols-2">
+                <div
+                    v-for="t in templates"
+                    :key="t.id"
+                    class="group rounded-xl border p-5 shadow-sm transition hover:shadow-md"
+                    :style="{
+                        backgroundColor: 'var(--surface)',
+                        borderColor: 'var(--border)',
+                    }"
+                >
+                    <div class="mb-3 flex items-start gap-3">
+                        <div class="text-3xl">{{ t.emoji }}</div>
+                        <div class="flex-1">
+                            <h3
+                                class="text-lg font-semibold"
+                                :style="{ color: 'var(--text)' }"
+                            >
+                                {{ t.name }}
+                            </h3>
+                            <p class="mt-1 text-sm" :style="{ color: 'var(--text-muted)' }">
+                                {{ t.description }}
+                            </p>
+                        </div>
+                    </div>
+                    <button
+                        :disabled="loadingTemplate === t.id"
+                        class="w-full rounded-lg px-4 py-2 text-sm font-semibold text-white shadow transition hover:opacity-90 active:scale-95 disabled:opacity-50"
+                        :style="{ backgroundColor: 'var(--primary)' }"
+                        @click="useTemplate(t)"
+                    >
+                        {{ loadingTemplate === t.id ? 'Creando...' : 'Use template' }}
+                    </button>
+                </div>
+            </div>
+
+            <p v-else class="text-sm italic" :style="{ color: 'var(--text-dim)' }">
+                No templates available right now.
+            </p>
+        </div>
+
+        <!-- Your pages section -->
         <div class="mb-8 flex items-center justify-between">
             <h2
                 class="text-xl font-semibold"
@@ -37,7 +133,7 @@ function navigateToCanvas() {
                 class="rounded-lg px-5 py-2.5 text-sm font-semibold text-white shadow transition hover:opacity-90 active:scale-95"
                 :style="{ backgroundColor: 'var(--primary)' }"
             >
-                + New page
+                + New blank page
             </Link>
         </div>
 
