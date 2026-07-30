@@ -1,17 +1,34 @@
 <script setup>
-import { computed, defineOptions, onMounted } from 'vue'
+import { computed, defineOptions, onMounted, onUnmounted, ref } from 'vue'
 import { Head, usePage } from '@inertiajs/vue3'
 
 defineOptions({ layout: null })
 
 const { page } = usePage().props
 
+const viewportWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1280)
+
+function updateViewport() {
+    viewportWidth.value = window.innerWidth
+}
+
 onMounted(() => {
+    window.addEventListener('resize', updateViewport)
     const params = new URLSearchParams(window.location.search)
     if (params.get('autoprint') === '1') {
         setTimeout(() => window.print(), 500)
     }
 })
+
+onUnmounted(() => {
+    window.removeEventListener('resize', updateViewport)
+})
+
+function canvasScale(canvas) {
+    const w = canvas.width || 800
+    const maxWidth = Math.min(viewportWidth.value - 32, w)
+    return Math.max(0.4, maxWidth / w)
+}
 
 const canvases = computed(() => {
     if (page.canvases?.length) return page.canvases
@@ -68,55 +85,66 @@ function elementStyle(el) {
 <template>
     <Head :title="page.title" />
 
-    <div class="flex min-h-screen flex-col items-center gap-6 overflow-hidden p-4 print:gap-4 print:p-2" :style="{ backgroundColor: 'var(--bg)', paddingTop: '2rem' }">
+    <div class="flex min-h-screen flex-col items-center gap-6 overflow-x-hidden p-2 sm:p-4 print:gap-4 print:p-2" :style="{ backgroundColor: 'var(--bg)', paddingTop: '2rem' }">
 
 
         <div
             v-for="(canvas, ci) in visibleCanvases"
             :key="ci"
-            class="relative shadow-lg overflow-hidden shrink-0 print:shadow-none print:break-after-page"
+            class="relative shrink-0 print:break-after-page"
             :style="{
-                width: (canvas.width || 800) + 'px',
-                height: (canvas.height || 600) + 'px',
-                background: canvas.background || '#ffffff',
-                borderRadius: '8px',
+                width: ((canvas.width || 800) * canvasScale(canvas)) + 'px',
+                height: ((canvas.height || 600) * canvasScale(canvas)) + 'px',
+                maxWidth: '100%',
             }"
         >
-            <div class="relative h-full w-full">
-                <div v-for="el in canvas.elements" :key="el.id" :style="elementStyle(el)" class="select-none">
-                    <img
-                        v-if="el.type === 'image'"
-                        :src="el.content"
-                        class="h-full w-full object-cover"
-                        draggable="false"
-                    />
-                    <svg
-                        v-else-if="el.type === 'shape'"
-                        class="h-full w-full"
-                        :style="{ color: el.color }"
-                        viewBox="0 0 24 24"
-                        fill="currentColor"
-                    >
-                        <path :d="SHAPE_PATHS[el.shape] || ''" />
-                    </svg>
-                    <img
-                        v-else-if="el.type === 'qr' && el.qrImageUrl"
-                        :src="el.qrImageUrl"
-                        class="h-full w-full rounded object-contain"
-                        :style="{ border: `4px solid ${el.foregroundColor || '#000000'}` }"
-                        draggable="false"
-                    />
-                    <div v-else-if="el.type === 'text'">
-                        {{ el.content }}
+            <div
+                class="relative shadow-lg overflow-hidden print:shadow-none"
+                :style="{
+                    width: (canvas.width || 800) + 'px',
+                    height: (canvas.height || 600) + 'px',
+                    background: canvas.background || '#ffffff',
+                    borderRadius: '8px',
+                    transform: `scale(${canvasScale(canvas)})`,
+                    transformOrigin: 'top left',
+                }"
+            >
+                <div class="relative h-full w-full">
+                    <div v-for="el in canvas.elements" :key="el.id" :style="elementStyle(el)" class="select-none">
+                        <img
+                            v-if="el.type === 'image'"
+                            :src="el.content"
+                            class="h-full w-full object-cover"
+                            draggable="false"
+                        />
+                        <svg
+                            v-else-if="el.type === 'shape'"
+                            class="h-full w-full"
+                            :style="{ color: el.color }"
+                            viewBox="0 0 24 24"
+                            fill="currentColor"
+                        >
+                            <path :d="SHAPE_PATHS[el.shape] || ''" />
+                        </svg>
+                        <img
+                            v-else-if="el.type === 'qr' && el.qrImageUrl"
+                            :src="el.qrImageUrl"
+                            class="h-full w-full rounded object-contain"
+                            :style="{ border: `4px solid ${el.foregroundColor || '#000000'}` }"
+                            draggable="false"
+                        />
+                        <div v-else-if="el.type === 'text'">
+                            {{ el.content }}
+                        </div>
                     </div>
-                </div>
 
-                <div
-                    v-if="!canvas.elements || canvas.elements.length === 0"
-                    class="absolute inset-0 flex items-center justify-center"
-                    :style="{ color: 'var(--text-dim)' }"
-                >
-                    <p>Canvas {{ ci + 1 }} is empty</p>
+                    <div
+                        v-if="!canvas.elements || canvas.elements.length === 0"
+                        class="absolute inset-0 flex items-center justify-center"
+                        :style="{ color: 'var(--text-dim)' }"
+                    >
+                        <p>Canvas {{ ci + 1 }} is empty</p>
+                    </div>
                 </div>
             </div>
         </div>
