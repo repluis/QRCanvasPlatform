@@ -47,7 +47,7 @@ function elementStyle(el) {
         textDecoration: el.textDecoration,
         textAlign: el.textAlign,
         fontFamily: el.fontFamily,
-        color: el.color,
+        color: el.color || '#1f2937',
     }
 }
 </script>

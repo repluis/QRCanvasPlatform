@@ -119,7 +119,7 @@ function onMouseDown(e) {
                 textDecoration: element.textDecoration,
                 textAlign: element.textAlign,
                 fontFamily: element.fontFamily,
-                color: element.color,
+                color: element.color || '#1f2937',
             }"
         >
             {{ element.content }}
