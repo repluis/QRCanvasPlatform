@@ -190,7 +190,27 @@ function viewPage() {
     }
 }
 
-function printCard() {
+function printCard(index) {
+    if (!currentUuid.value) return
+    const url = `/page?uuid=${currentUuid.value}&autoprint=1&card=${index}`
+    const win = window.open(url, '_blank')
+    if (win) {
+        const timer = setInterval(() => {
+            if (win.closed) {
+                clearInterval(timer)
+                return
+            }
+            if (win.document?.readyState === 'complete') {
+                clearInterval(timer)
+                win.focus()
+                win.print()
+            }
+        }, 200)
+        setTimeout(() => clearInterval(timer), 10000)
+    }
+}
+
+function printAllVisible() {
     if (!currentUuid.value) return
     const win = window.open(`/page?uuid=${currentUuid.value}&autoprint=1`, '_blank')
     if (win) {
@@ -283,10 +303,25 @@ function handleAddQR(qrConfig) {
                 </button>
                 <button
                     v-if="currentUuid"
-                    class="rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-600 transition hover:bg-gray-50 active:scale-95"
+                    class="flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-600 transition hover:bg-gray-50 active:scale-95"
                     @click="viewPage"
                 >
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
                     Preview
+                </button>
+                <button
+                    v-if="currentUuid"
+                    class="flex items-center gap-1.5 rounded-lg border border-gray-300 px-3 py-2 text-sm text-gray-600 transition hover:bg-gray-50 active:scale-95"
+                    @click="printAllVisible"
+                    title="Imprimir todas las tarjetas visibles"
+                >
+                    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" />
+                    </svg>
+                    Imprimir todas
                 </button>
                 <button
                     :disabled="saving"
@@ -381,7 +416,7 @@ function handleAddQR(qrConfig) {
                         <button
                             type="button"
                             class="shrink-0 rounded p-1 text-gray-300 transition hover:text-indigo-500"
-                            @click.stop="printCard"
+                            @click.stop="printCard(i)"
                             title="Imprimir tarjeta"
                         >
                             <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
