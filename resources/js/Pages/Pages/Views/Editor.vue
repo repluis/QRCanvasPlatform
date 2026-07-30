@@ -39,6 +39,8 @@ const currentPageId = ref(page?.id ?? null)
 const showPagesList = ref(true)
 const showPagesDropdown = ref(false)
 
+const origin = typeof window !== 'undefined' ? window.location.origin : ''
+
 function isDarkBg(bg) {
     if (!bg || bg === '#ffffff') return false
     const hex = bg.replace('#', '')
@@ -240,7 +242,7 @@ function handleAddQR(qrConfig) {
                 @add-text="addText"
                 @add-image="addImage"
                 @add-shape="addShape"
-                @add-qr="handleAddQR({ text: window.location.origin + '/page?uuid=' + currentUuid, foreground_color: '#000000', background_color: '#ffffff', error_correction_level: 'medium' })"
+                @add-qr="handleAddQR({ text: origin + '/page?uuid=' + currentUuid, foreground_color: '#000000', background_color: '#ffffff', error_correction_level: 'medium' })"
                 @remove="removeSelected"
                 @bring-forward="bringForward(selectedId)"
                 @send-backward="sendBackward(selectedId)"
