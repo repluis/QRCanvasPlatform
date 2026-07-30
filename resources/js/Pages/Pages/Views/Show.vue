@@ -23,7 +23,7 @@ const visibleCanvases = computed(() => {
     const cardIdx = params.get('card')
     if (cardIdx !== null) {
         const c = canvases.value[Number(cardIdx)]
-        return c && c.visible !== false ? [c] : []
+        return c ? [c] : []
     }
     return canvases.value.filter(c => c.visible !== false)
 })

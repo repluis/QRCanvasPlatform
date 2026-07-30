@@ -192,41 +192,12 @@ function viewPage() {
 
 function printCard(index) {
     if (!currentUuid.value) return
-    const url = `/page?uuid=${currentUuid.value}&autoprint=1&card=${index}`
-    const win = window.open(url, '_blank')
-    if (win) {
-        const timer = setInterval(() => {
-            if (win.closed) {
-                clearInterval(timer)
-                return
-            }
-            if (win.document?.readyState === 'complete') {
-                clearInterval(timer)
-                win.focus()
-                win.print()
-            }
-        }, 200)
-        setTimeout(() => clearInterval(timer), 10000)
-    }
+    window.open(`/page?uuid=${currentUuid.value}&autoprint=1&card=${index}`, '_blank')
 }
 
 function printAllVisible() {
     if (!currentUuid.value) return
-    const win = window.open(`/page?uuid=${currentUuid.value}&autoprint=1`, '_blank')
-    if (win) {
-        const timer = setInterval(() => {
-            if (win.closed) {
-                clearInterval(timer)
-                return
-            }
-            if (win.document?.readyState === 'complete') {
-                clearInterval(timer)
-                win.focus()
-                win.print()
-            }
-        }, 200)
-        setTimeout(() => clearInterval(timer), 10000)
-    }
+    window.open(`/page?uuid=${currentUuid.value}&autoprint=1`, '_blank')
 }
 
 function getQrImageUrl(text, fg = '000000', bg = 'ffffff', size = 200) {
