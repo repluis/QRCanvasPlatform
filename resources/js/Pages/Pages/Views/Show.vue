@@ -102,7 +102,8 @@ function elementStyle(el) {
                     <img
                         v-else-if="el.type === 'qr' && el.qrImageUrl"
                         :src="el.qrImageUrl"
-                        class="h-full w-full object-contain"
+                        class="h-full w-full rounded object-contain"
+                        :style="{ border: `4px solid ${el.foregroundColor || '#000000'}` }"
                         draggable="false"
                     />
                     <div v-else-if="el.type === 'text'">

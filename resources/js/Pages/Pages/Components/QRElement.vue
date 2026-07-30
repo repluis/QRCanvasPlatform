@@ -8,7 +8,8 @@ const props = defineProps({
     <img
         v-if="element.qrImageUrl"
         :src="element.qrImageUrl"
-        class="h-full w-full object-contain pointer-events-none"
+        class="pointer-events-none h-full w-full rounded object-contain"
+        :style="{ border: `4px solid ${element.foregroundColor || '#000000'}` }"
         draggable="false"
         alt="QR Code"
     />
