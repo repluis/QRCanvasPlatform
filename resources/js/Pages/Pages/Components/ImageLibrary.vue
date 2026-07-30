@@ -425,7 +425,7 @@ const categoryItems = computed(() => currentCategory.value?.items ?? [])
 
             <div v-if="tab === 'qr'" class="space-y-3">
                 <p class="text-xs text-gray-400">
-                    QR linking to: <code class="text-indigo-600">/canvas?uuid={{ pageUuid }}</code>
+                    QR linking to: <code class="text-indigo-600 break-all">{{ window.location.origin }}/page?uuid={{ pageUuid }}</code>
                 </p>
                 <div>
                     <label class="mb-1 block text-xs text-gray-400">QR Color</label>
@@ -438,7 +438,7 @@ const categoryItems = computed(() => currentCategory.value?.items ?? [])
                 <button
                     class="w-full rounded-lg bg-violet-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-violet-600 active:scale-95"
                     @click="$emit('addQr', {
-                        text: '/canvas?uuid=' + pageUuid,
+                        text: window.location.origin + '/page?uuid=' + pageUuid,
                         foreground_color: qrForeground,
                         background_color: qrBackground,
                         error_correction_level: 'medium',

@@ -240,7 +240,7 @@ function handleAddQR(qrConfig) {
                 @add-text="addText"
                 @add-image="addImage"
                 @add-shape="addShape"
-                @add-qr="handleAddQR({ text: '/canvas?uuid=' + currentUuid, foreground_color: '#000000', background_color: '#ffffff', error_correction_level: 'medium' })"
+                @add-qr="handleAddQR({ text: window.location.origin + '/page?uuid=' + currentUuid, foreground_color: '#000000', background_color: '#ffffff', error_correction_level: 'medium' })"
                 @remove="removeSelected"
                 @bring-forward="bringForward(selectedId)"
                 @send-backward="sendBackward(selectedId)"
