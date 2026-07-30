@@ -5,6 +5,7 @@ const props = defineProps({
     images: { type: Array, default: () => [] },
     shapes: { type: Array, default: () => [] },
     phrases: { type: Array, default: () => [] },
+    pageUuid: { type: String, default: '' },
 })
 
 const emit = defineEmits(['addImageToCanvas', 'addShape', 'addText', 'setBackground', 'addQr'])
@@ -13,10 +14,8 @@ const tab = ref('images')
 const imgCategory = ref('love')
 const bgSubtab = ref('solids')
 
-const qrText = ref('')
 const qrForeground = ref('#000000')
 const qrBackground = ref('#ffffff')
-const qrErrorLevel = ref('medium')
 
 const SHAPE_ICONS = {
     heart: 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z',
@@ -425,26 +424,9 @@ const categoryItems = computed(() => currentCategory.value?.items ?? [])
             </div>
 
             <div v-if="tab === 'qr'" class="space-y-3">
-                <div>
-                    <label class="mb-1 block text-xs text-gray-400">Content URL / Text</label>
-                    <input
-                        v-model="qrText"
-                        class="w-full rounded-lg border px-3 py-2 text-sm outline-none transition focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400"
-                        placeholder="https://example.com"
-                    />
-                </div>
-                <div>
-                    <label class="mb-1 block text-xs text-gray-400">Error Correction</label>
-                    <select
-                        v-model="qrErrorLevel"
-                        class="w-full rounded-lg border px-3 py-2 text-sm outline-none transition focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400"
-                    >
-                        <option value="low">Low (7%)</option>
-                        <option value="medium">Medium (15%)</option>
-                        <option value="quartile">Quartile (25%)</option>
-                        <option value="high">High (30%)</option>
-                    </select>
-                </div>
+                <p class="text-xs text-gray-400">
+                    QR linking to: <code class="text-indigo-600">/canvas?uuid={{ pageUuid }}</code>
+                </p>
                 <div>
                     <label class="mb-1 block text-xs text-gray-400">QR Color</label>
                     <input v-model="qrForeground" type="color" class="h-8 w-full cursor-pointer rounded border" />
@@ -454,13 +436,12 @@ const categoryItems = computed(() => currentCategory.value?.items ?? [])
                     <input v-model="qrBackground" type="color" class="h-8 w-full cursor-pointer rounded border" />
                 </div>
                 <button
-                    class="w-full rounded-lg bg-violet-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-violet-600 active:scale-95 disabled:opacity-40"
-                    :disabled="!qrText"
+                    class="w-full rounded-lg bg-violet-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-violet-600 active:scale-95"
                     @click="$emit('addQr', {
-                        text: qrText,
+                        text: '/canvas?uuid=' + pageUuid,
                         foreground_color: qrForeground,
                         background_color: qrBackground,
-                        error_correction_level: qrErrorLevel,
+                        error_correction_level: 'medium',
                     })"
                 >
                     Add QR to Canvas

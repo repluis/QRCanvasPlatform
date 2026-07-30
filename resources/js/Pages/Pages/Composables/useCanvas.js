@@ -108,7 +108,7 @@ export function useCanvas(initialCanvases) {
         }
         console.log('[addQR] elemento a insertar:', el)
         console.log('[addQR] canvas actual:', activeIndex.value, 'elements antes:', elements.value.length)
-        canvases.value[activeIndex.value].elements.push(el)
+        canvases.value[0].elements.push(el)
         selectedId.value = id
         console.log('[addQR] elements después:', elements.value.length, 'selectedId:', id)
     }
