@@ -467,7 +467,7 @@ function handleAddQR(qrConfig) {
                         type="number"
                         min="100"
                         max="2000"
-                        class="w-full rounded-lg border px-3 py-2 text-sm outline-none transition focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400"
+                        class="w-full rounded-lg border px-3 py-2 text-sm text-gray-900 outline-none transition focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400"
                     />
                 </div>
                 <div>
@@ -477,7 +477,7 @@ function handleAddQR(qrConfig) {
                         type="number"
                         min="100"
                         max="2000"
-                        class="w-full rounded-lg border px-3 py-2 text-sm outline-none transition focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400"
+                        class="w-full rounded-lg border px-3 py-2 text-sm text-gray-900 outline-none transition focus:border-indigo-400 focus:ring-1 focus:ring-indigo-400"
                     />
                 </div>
                 <label class="flex items-center gap-2 text-sm text-gray-600">
