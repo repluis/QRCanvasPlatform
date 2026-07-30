@@ -454,6 +454,7 @@ function handleAddQR(qrConfig) {
             </div>
 
             <ImageLibrary
+                v-if="!selectedId"
                 :images="images"
                 :shapes="SHAPES"
                 :phrases="LOVE_PHRASES"
