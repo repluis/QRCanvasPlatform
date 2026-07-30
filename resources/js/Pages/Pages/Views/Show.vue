@@ -66,7 +66,7 @@ function elementStyle(el) {
                 width: (canvas.width || 800) + 'px',
                 height: (canvas.height || 600) + 'px',
                 background: canvas.background || '#ffffff',
-                borderRadius: isPrinting ? '0' : '8px',
+                borderRadius: '8px',
             }"
         >
             <div class="relative h-full w-full">
