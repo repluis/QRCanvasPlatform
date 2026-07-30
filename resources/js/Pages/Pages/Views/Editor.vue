@@ -190,6 +190,25 @@ function viewPage() {
     }
 }
 
+function printCard() {
+    if (!currentUuid.value) return
+    const win = window.open(`/page?uuid=${currentUuid.value}&autoprint=1`, '_blank')
+    if (win) {
+        const timer = setInterval(() => {
+            if (win.closed) {
+                clearInterval(timer)
+                return
+            }
+            if (win.document?.readyState === 'complete') {
+                clearInterval(timer)
+                win.focus()
+                win.print()
+            }
+        }, 200)
+        setTimeout(() => clearInterval(timer), 10000)
+    }
+}
+
 function getQrImageUrl(text, fg = '000000', bg = 'ffffff', size = 200) {
     return `https://quickchart.io/qr?text=${encodeURIComponent(text)}&size=${size}&margin=2&dark=${fg.replace('#', '')}&light=${bg.replace('#', '')}`
 }
@@ -362,7 +381,7 @@ function handleAddQR(qrConfig) {
                         <button
                             type="button"
                             class="shrink-0 rounded p-1 text-gray-300 transition hover:text-indigo-500"
-                            @click.stop="window.open('/page?uuid=' + currentUuid, '_blank')"
+                            @click.stop="printCard"
                             title="Imprimir tarjeta"
                         >
                             <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">

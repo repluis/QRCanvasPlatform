@@ -1,10 +1,17 @@
 <script setup>
-import { computed, defineOptions } from 'vue'
+import { computed, defineOptions, onMounted } from 'vue'
 import { Head, usePage } from '@inertiajs/vue3'
 
 defineOptions({ layout: null })
 
 const { page } = usePage().props
+
+onMounted(() => {
+    const params = new URLSearchParams(window.location.search)
+    if (params.get('autoprint') === '1') {
+        setTimeout(() => window.print(), 500)
+    }
+})
 
 const canvases = computed(() => {
     if (page.canvases?.length) return page.canvases
