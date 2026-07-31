@@ -133,6 +133,16 @@ function elementStyle(el) {
                             :style="{ border: `4px solid ${el.foregroundColor || '#000000'}` }"
                             draggable="false"
                         />
+                        <div
+                            v-else-if="el.type === 'animation'"
+                            class="pointer-events-none flex h-full w-full items-center justify-center"
+                            :style="{
+                                fontSize: `${el.fontSize}px`,
+                                color: el.color,
+                                animation: `${el.animation} 2.4s ease-in-out infinite`,
+                                lineHeight: 1,
+                            }"
+                        >{{ el.content }}</div>
                         <div v-else-if="el.type === 'text'">
                             {{ el.content }}
                         </div>

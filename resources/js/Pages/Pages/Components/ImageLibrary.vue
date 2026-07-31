@@ -5,19 +5,24 @@ const props = defineProps({
     images: { type: Array, default: () => [] },
     shapes: { type: Array, default: () => [] },
     phrases: { type: Array, default: () => [] },
-    pageUuid: { type: String, default: '' },
 })
 
-const emit = defineEmits(['addImageToCanvas', 'addShape', 'addText', 'setBackground', 'addQr'])
+const emit = defineEmits(['addImageToCanvas', 'addShape', 'addText', 'setBackground', 'addAnimation'])
 
 const tab = ref('images')
 const imgCategory = ref('love')
 const bgSubtab = ref('solids')
 
-const qrForeground = ref('#000000')
-const qrBackground = ref('#ffffff')
-
-const origin = typeof window !== 'undefined' ? window.location.origin : ''
+const ANIMATIONS = [
+    { id: 'float-heart',     label: 'Heart float',     emoji: '💖', color: '#ef4444', fontSize: 56 },
+    { id: 'spin-star',       label: 'Spinning star',   emoji: '⭐', color: '#fbbf24', fontSize: 52 },
+    { id: 'pulse-heart',     label: 'Pulse heart',     emoji: '❤️', color: '#dc2626', fontSize: 56 },
+    { id: 'bounce-circle',   label: 'Bouncing ball',   emoji: '🔴', color: '#ef4444', fontSize: 48 },
+    { id: 'twinkle-star',    label: 'Twinkling star',  emoji: '✨', color: '#facc15', fontSize: 52 },
+    { id: 'drift-cloud',     label: 'Floating cloud',  emoji: '☁️', color: '#94a3b8', fontSize: 52 },
+    { id: 'float-flower',    label: 'Floating flower', emoji: '🌸', color: '#f472b6', fontSize: 52 },
+    { id: 'spin-moon',       label: 'Spinning moon',   emoji: '🌙', color: '#fbbf24', fontSize: 52 },
+]
 
 const SHAPE_ICONS = {
     heart: 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z',
@@ -354,7 +359,7 @@ const categoryItems = computed(() => currentCategory.value?.items ?? [])
     <div class="flex w-64 flex-col border-l bg-white">
         <div class="flex border-b">
             <button
-                v-for="t in ['images', 'shapes', 'phrases', 'qr', 'backgrounds']"
+                v-for="t in ['images', 'shapes', 'phrases', 'animations', 'backgrounds']"
                 :key="t"
                 class="flex-1 px-2 py-2.5 text-xs font-semibold uppercase tracking-wider transition"
                 :class="tab === t
@@ -362,7 +367,7 @@ const categoryItems = computed(() => currentCategory.value?.items ?? [])
                     : 'text-gray-400 hover:text-gray-600'"
                 @click="tab = t"
             >
-                {{ t === 'images' ? 'Img' : t === 'shapes' ? 'Shapes' : t === 'phrases' ? 'Text' : t === 'qr' ? 'QR' : 'Bg' }}
+                {{ t === 'images' ? 'Img' : t === 'shapes' ? 'Shapes' : t === 'phrases' ? 'Text' : t === 'animations' ? 'Anim' : 'Bg' }}
             </button>
         </div>
 
@@ -425,28 +430,26 @@ const categoryItems = computed(() => currentCategory.value?.items ?? [])
                 </button>
             </div>
 
-            <div v-if="tab === 'qr'" class="space-y-3">
-                <p class="text-xs text-gray-400">
-                    QR linking to: <code class="text-indigo-600 break-all">{{ origin }}/page?uuid={{ pageUuid }}</code>
+            <div v-if="tab === 'animations'" class="space-y-2">
+                <p class="mb-2 text-xs text-gray-400">
+                    Elementos con animación CSS — se reproducen continuamente al ver la página.
                 </p>
-                <div>
-                    <label class="mb-1 block text-xs text-gray-400">QR Color</label>
-                    <input v-model="qrForeground" type="color" class="h-8 w-full cursor-pointer rounded border" />
-                </div>
-                <div>
-                    <label class="mb-1 block text-xs text-gray-400">Background Color</label>
-                    <input v-model="qrBackground" type="color" class="h-8 w-full cursor-pointer rounded border" />
-                </div>
                 <button
-                    class="w-full rounded-lg bg-violet-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-violet-600 active:scale-95"
-                    @click="$emit('addQr', {
-                        text: origin + '/page?uuid=' + pageUuid,
-                        foreground_color: qrForeground,
-                        background_color: qrBackground,
-                        error_correction_level: 'medium',
-                    })"
+                    v-for="a in ANIMATIONS"
+                    :key="a.id"
+                    class="group flex w-full items-center gap-3 rounded-lg border-2 border-transparent px-3 py-2 text-left transition hover:border-indigo-400 hover:bg-indigo-50 active:scale-95"
+                    @click="$emit('addAnimation', a)"
+                    :title="'Add ' + a.label"
                 >
-                    Add QR to Canvas
+                    <span
+                        class="text-2xl"
+                        :style="{
+                            color: a.color,
+                            animation: `${a.id} 2.4s ease-in-out infinite`,
+                            display: 'inline-block',
+                        }"
+                    >{{ a.emoji }}</span>
+                    <span class="flex-1 text-sm font-medium text-gray-700">{{ a.label }}</span>
                 </button>
             </div>
 

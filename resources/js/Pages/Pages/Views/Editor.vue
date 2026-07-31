@@ -63,6 +63,7 @@ const {
     addImage,
     addShape,
     addQR,
+    addAnimation,
     removeSelected,
     select,
     updateElement,
@@ -431,11 +432,10 @@ function handleAddQR(qrConfig) {
                 :images="images"
                 :shapes="SHAPES"
                 :phrases="LOVE_PHRASES"
-                :page-uuid="currentUuid"
                 @add-image-to-canvas="addImage"
                 @add-shape="addShape"
                 @add-text="addText"
-                @add-qr="handleAddQR"
+                @add-animation="addAnimation"
                 @set-background="setBackground"
             />
 

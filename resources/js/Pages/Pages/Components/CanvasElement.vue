@@ -110,6 +110,16 @@ function onMouseDown(e) {
             :element="element"
         />
         <div
+            v-else-if="element.type === 'animation'"
+            class="pointer-events-none flex h-full w-full items-center justify-center"
+            :style="{
+                fontSize: `${element.fontSize}px`,
+                color: element.color,
+                animation: `${element.animation} 2.4s ease-in-out infinite`,
+                lineHeight: 1,
+            }"
+        >{{ element.content }}</div>
+        <div
             v-else
             class="flex h-full w-full items-center rounded px-2 pointer-events-none"
             :style="{

@@ -113,6 +113,24 @@ export function useCanvas(initialCanvases) {
         console.log('[addQR] elements después:', elements.value.length, 'selectedId:', id)
     }
 
+    function addAnimation(animationData) {
+        const id = String(nextId++)
+        const el = {
+            id,
+            type: 'animation',
+            animation: animationData.id || 'float-heart',
+            content: animationData.emoji || '💖',
+            x: 50 + (elements.value.length * 30) % 300,
+            y: 50 + (elements.value.length * 30) % 300,
+            width: animationData.fontSize || 56,
+            height: animationData.fontSize || 56,
+            color: animationData.color || '#ef4444',
+            fontSize: animationData.fontSize || 56,
+        }
+        canvases.value[activeIndex.value].elements.push(el)
+        selectedId.value = id
+    }
+
     function removeSelected() {
         if (!selectedId.value) return
         canvases.value[activeIndex.value].elements = elements.value.filter((el) => el.id !== selectedId.value)
@@ -203,6 +221,7 @@ export function useCanvas(initialCanvases) {
         addImage,
         addShape,
         addQR,
+        addAnimation,
         removeSelected,
         select,
         updateElement,
