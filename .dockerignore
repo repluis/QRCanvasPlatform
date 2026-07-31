@@ -1,0 +1,54 @@
+# Files / dirs that must NEVER end up in the Docker image.
+
+# Build artifacts we recreate inside the image
+node_modules
+public/build
+public/hot
+
+# IDE / OS junk
+.idea
+.vscode
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+
+# Local config & secrets — must come from Render env, not the repo
+.env
+.env.backup
+.env.local
+.env.*.local
+
+# Composer
+vendor
+
+# Logs & runtime
+*.log
+storage/logs/*
+storage/framework/cache/data/*
+storage/framework/sessions/*
+storage/framework/testing/*
+storage/framework/views/*
+storage/app/public/qr/*
+
+# Tests
+tests
+phpunit.xml
+phpunit.xml.dist
+
+# CI / Docker itself (avoid recursive copy)
+.github
+docker-compose*.yml
+Dockerfile
+.dockerignore
+
+# Git metadata
+.git
+.gitignore
+.gitattributes
+
+# Misc
+README.md
+DEPLOY.md
+TEMPLATES.md
+*.md

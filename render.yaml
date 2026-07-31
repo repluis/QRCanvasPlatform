@@ -1,0 +1,122 @@
+# =============================================================
+# Render Blueprint — QRCanvasPlatform
+# Deploys the full stack: Web Service + managed Postgres + queue
+# worker. Render creates them all from this single file.
+#
+# How to use:
+#   1. Push this repo to GitHub.
+#   2. In Render dashboard → "New" → "Blueprint" → point at this repo.
+#   3. Render reads this file and creates the resources below.
+#   4. The first deploy will seed the database schema automatically.
+#
+# To re-deploy after changes: just push to the connected branch.
+# =============================================================
+
+services:
+  # ----------------------------------------------------------------
+  # Web Service — Laravel HTTP server
+  # ----------------------------------------------------------------
+  - type: web
+    name: qrcanvas-platform
+    runtime: docker
+    plan: starter
+    branch: main
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /up
+    autoDeploy: true
+
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY
+        generateValue: true            # Render generates a 32-char APP_KEY on first deploy
+      - key: APP_URL
+        value: https://qrcanvas-platform.onrender.com
+      - key: LOG_CHANNEL
+        value: stack
+      - key: LOG_STACK
+        value: single
+      - key: SESSION_DRIVER
+        value: database
+      - key: QUEUE_CONNECTION
+        value: database
+      - key: CACHE_STORE
+        value: database
+      - key: BROADCAST_CONNECTION
+        value: log
+      - key: MAIL_MAILER
+        value: log
+      - key: FILESYSTEM_DISK
+        value: local
+
+      # Database — Render auto-injects the internal connection URL.
+      # The connection is resolved via the DATABASE_URL helper below.
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DATABASE_URL
+        fromDatabase:
+          name: qrcanvas-db
+          property: connectionString
+
+      # Build-time / runtime hints (Render picks up automatically)
+      - key: PORT
+        sync: false                     # Render sets this for us
+      - key: NPM_CONFIG_PRODUCTION
+        value: "false"
+
+  # ----------------------------------------------------------------
+  # Background Worker — processes queued jobs (sessions/cache writes
+  # are queued through the database driver, so a worker is needed)
+  # ----------------------------------------------------------------
+  - type: worker
+    name: qrcanvas-worker
+    runtime: docker
+    plan: starter
+    branch: main
+    region: oregon
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    autoDeploy: true
+    startCommand: php artisan queue:work --tries=1 --timeout=0 --sleep=3
+
+    envVars:
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: "false"
+      - key: APP_KEY
+        fromService:
+          type: web
+          name: qrcanvas-platform
+          property: APP_KEY
+      - key: DB_CONNECTION
+        value: pgsql
+      - key: DATABASE_URL
+        fromDatabase:
+          name: qrcanvas-db
+          property: connectionString
+      - key: QUEUE_CONNECTION
+        value: database
+      - key: CACHE_STORE
+        value: database
+      - key: SESSION_DRIVER
+        value: database
+      - key: LOG_CHANNEL
+        value: stack
+      - key: LOG_STACK
+        value: single
+
+# ----------------------------------------------------------------
+# Managed PostgreSQL database
+# ----------------------------------------------------------------
+databases:
+  - name: qrcanvas-db
+    plan: starter
+    region: oregon
+    databaseName: qrcanvas
+    user: qrcanvas
+    ipAllowList: []                    # Only allow internal access
