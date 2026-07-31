@@ -22,5 +22,8 @@ php artisan view:cache || true
 echo "[entrypoint] running migrations"
 php artisan migrate --force --no-interaction || true
 
+echo "[entrypoint] fixing legacy domain in existing pages (no-op if none left)"
+php artisan pages:fix-domain || true
+
 echo "[entrypoint] starting php artisan serve on 0.0.0.0:${PORT}"
 exec php artisan serve --host 0.0.0.0 --port "${PORT}"
