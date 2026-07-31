@@ -212,6 +212,7 @@ curl -fsSL https://qrcanvas-platform.onrender.com/
 |---|---|---|
 | "Class not found" errors | composer install didn't autoload | Check build log; verify `--optimize-autoloader` |
 | Frontend shows raw `@{{ }}` | `npm run build` didn't run | Check Node version; Render needs Node 20.19+ (set in `render.yaml` build env) |
+| Build fails at `RUN npm run build` with `errors: [Getter/Setter]` from rolldown | V8 heap too small (Render's starter tier limits RAM) OR Node version too old | The Dockerfile already sets `NODE_OPTIONS=--max-old-space-size=4096` and uses `node:22-alpine`. If it still fails, upgrade your Render instance plan (Standard or above has ≥2 GB RAM). |
 | Storage 403 on `/storage/qr/...` | `storage:link` didn't run | `render exec` into the container and run `php artisan storage:link` |
 | "could not find driver pgsql" | Missing PHP extension | Verify `pdo_pgsql` is in the Dockerfile (it is) |
 | DB connection refused | Wrong DB host | Use `DATABASE_URL` from Render's Internal Database, not External |

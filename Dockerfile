@@ -7,7 +7,10 @@
 # official PHP runtime works the same way.
 
 # ---------- Stage 1: build the JS/CSS bundle with Node ----------
-FROM node:20.19-alpine AS assets
+# Node 22 LTS is the safest pairing for Vite 8 + Rolldown + Tailwind 4 oxide.
+# Rolldown's native bindings are prebuilt for both glibc and musl on
+# x86_64 + arm64. Alpine (musl) is fine — keeps the image small.
+FROM node:22-alpine AS assets
 
 WORKDIR /app
 
@@ -15,10 +18,13 @@ WORKDIR /app
 COPY package.json package-lock.json* .npmrc ./
 RUN npm ci
 
-# Copy the source Vite needs and build
+# Copy the source Vite needs and build.
+# NODE_OPTIONS raises V8's max heap so rolldown doesn't OOM during
+# the link phase on Render's starter-tier build (≈512MB–1GB containers).
 COPY vite.config.js ./
 COPY resources ./resources
 COPY public ./public
+ENV NODE_OPTIONS="--max-old-space-size=4096"
 RUN npm run build
 
 
