@@ -7,7 +7,7 @@ const props = defineProps({
     phrases: { type: Array, default: () => [] },
 })
 
-const emit = defineEmits(['addImageToCanvas', 'addShape', 'addText', 'setBackground', 'addAnimation'])
+const emit = defineEmits(['addImageToCanvas', 'addShape', 'addText', 'setBackground', 'addAnimation', 'addCarousel'])
 
 const tab = ref('images')
 const imgCategory = ref('love')
@@ -23,6 +23,27 @@ const ANIMATIONS = [
     { id: 'float-flower',    label: 'Floating flower', emoji: '🌸', color: '#f472b6', fontSize: 52 },
     { id: 'spin-moon',       label: 'Spinning moon',   emoji: '🌙', color: '#fbbf24', fontSize: 52 },
 ]
+
+function readFiles(files) {
+    return Promise.all([...files].map(file => new Promise((resolve, reject) => {
+        if (!file.type.startsWith('image/')) return resolve(null)
+        const reader = new FileReader()
+        reader.onload = (ev) => resolve(ev.target.result)
+        reader.onerror = reject
+        reader.readAsDataURL(file)
+    }))).then(urls => urls.filter(Boolean))
+}
+
+function onCarouselFiles(e) {
+    const files = e.target.files
+    if (!files || files.length === 0) return
+    readFiles(files).then(urls => {
+        if (urls.length > 0) {
+            emit('addCarousel', urls)
+        }
+        e.target.value = ''
+    })
+}
 
 const SHAPE_ICONS = {
     heart: 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z',
@@ -359,7 +380,7 @@ const categoryItems = computed(() => currentCategory.value?.items ?? [])
     <div class="flex w-64 flex-col border-l bg-white">
         <div class="flex border-b">
             <button
-                v-for="t in ['images', 'shapes', 'phrases', 'animations', 'backgrounds']"
+                v-for="t in ['images', 'shapes', 'phrases', 'animations', 'carousel', 'backgrounds']"
                 :key="t"
                 class="flex-1 px-2 py-2.5 text-xs font-semibold uppercase tracking-wider transition"
                 :class="tab === t
@@ -367,7 +388,7 @@ const categoryItems = computed(() => currentCategory.value?.items ?? [])
                     : 'text-gray-400 hover:text-gray-600'"
                 @click="tab = t"
             >
-                {{ t === 'images' ? 'Img' : t === 'shapes' ? 'Shapes' : t === 'phrases' ? 'Text' : t === 'animations' ? 'Anim' : 'Bg' }}
+                {{ t === 'images' ? 'Img' : t === 'shapes' ? 'Shapes' : t === 'phrases' ? 'Text' : t === 'animations' ? 'Anim' : t === 'carousel' ? 'Car' : 'Bg' }}
             </button>
         </div>
 
@@ -451,6 +472,28 @@ const categoryItems = computed(() => currentCategory.value?.items ?? [])
                     >{{ a.emoji }}</span>
                     <span class="flex-1 text-sm font-medium text-gray-700">{{ a.label }}</span>
                 </button>
+            </div>
+
+            <div v-if="tab === 'carousel'" class="space-y-3">
+                <p class="text-xs text-gray-400">
+                    Sube 2 o más fotos para crear un carrusel. Luego podrás verlo y pasar las fotos con las flechas ◀ ▶.
+                </p>
+                <label
+                    class="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border-2 border-dashed border-indigo-300 px-4 py-6 text-sm font-medium text-indigo-600 transition hover:border-indigo-400 hover:bg-indigo-50 active:scale-95"
+                >
+                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    Subir fotos (multi-select)
+                    <input
+                        type="file"
+                        accept="image/*"
+                        multiple
+                        class="hidden"
+                        @change="onCarouselFiles"
+                    />
+                </label>
+                <p class="text-xs text-gray-400">Selecciona 2 o más imágenes para crear el carrusel.</p>
             </div>
 
             <div v-if="tab === 'backgrounds'">

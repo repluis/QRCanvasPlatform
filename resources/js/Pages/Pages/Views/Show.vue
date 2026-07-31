@@ -1,6 +1,7 @@
 <script setup>
 import { computed, defineOptions, onMounted, onUnmounted, ref, watchEffect } from 'vue'
 import { Head, usePage } from '@inertiajs/vue3'
+import CarouselElement from '../Components/CarouselElement.vue'
 
 defineOptions({ layout: null })
 
@@ -142,6 +143,11 @@ function elementStyle(el) {
                             class="h-full w-full rounded object-contain"
                             :style="{ border: `4px solid ${el.foregroundColor || '#000000'}` }"
                             draggable="false"
+                        />
+                        <CarouselElement
+                            v-else-if="el.type === 'carousel'"
+                            :element="el"
+                            :readonly="true"
                         />
                         <div
                             v-else-if="el.type === 'animation'"

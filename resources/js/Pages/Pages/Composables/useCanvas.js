@@ -75,6 +75,21 @@ export function useCanvas(initialCanvases) {
         selectedId.value = id
     }
 
+    function addCarousel(urls) {
+        if (!urls || urls.length === 0) return
+        const id = String(nextId++)
+        canvases.value[activeIndex.value].elements.push({
+            id,
+            type: 'carousel',
+            x: 50 + (elements.value.length * 30) % 300,
+            y: 50 + (elements.value.length * 30) % 300,
+            width: 300,
+            height: 220,
+            images: urls.map((url, i) => ({ id: `img-${i}`, url })),
+        })
+        selectedId.value = id
+    }
+
     function addShape(shape) {
         const id = String(nextId++)
         canvases.value[activeIndex.value].elements.push({
@@ -220,6 +235,7 @@ export function useCanvas(initialCanvases) {
         addText,
         addImage,
         addShape,
+        addCarousel,
         addQR,
         addAnimation,
         removeSelected,

@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import QRElement from './QRElement.vue'
+import CarouselElement from './CarouselElement.vue'
 
 const props = defineProps({
     element: { type: Object, required: true },
@@ -107,6 +108,10 @@ function onMouseDown(e) {
         </svg>
         <QRElement
             v-else-if="element.type === 'qr'"
+            :element="element"
+        />
+        <CarouselElement
+            v-else-if="element.type === 'carousel'"
             :element="element"
         />
         <div

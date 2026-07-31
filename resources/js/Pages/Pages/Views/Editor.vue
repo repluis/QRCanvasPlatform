@@ -64,6 +64,7 @@ const {
     addShape,
     addQR,
     addAnimation,
+    addCarousel,
     removeSelected,
     select,
     updateElement,
@@ -436,6 +437,7 @@ function handleAddQR(qrConfig) {
                 @add-shape="addShape"
                 @add-text="addText"
                 @add-animation="addAnimation"
+                @add-carousel="addCarousel"
                 @set-background="setBackground"
             />
 
