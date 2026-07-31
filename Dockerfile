@@ -8,9 +8,12 @@
 
 # ---------- Stage 1: build the JS/CSS bundle with Node ----------
 # Node 22 LTS is the safest pairing for Vite 8 + Rolldown + Tailwind 4 oxide.
-# Rolldown's native bindings are prebuilt for both glibc and musl on
-# x86_64 + arm64. Alpine (musl) is fine — keeps the image small.
-FROM node:22-alpine AS assets
+# Debian slim (glibc), not Alpine: rolldown/oxide/lightningcss ship musl
+# native bindings that have repeatedly failed to load on Alpine's newer
+# musl builds (fails fast with "aggregateBindingErrorsIntoJsError").
+# This stage's output is just static assets copied into the final image,
+# so the extra size here doesn't affect the runtime image at all.
+FROM node:22-bookworm-slim AS assets
 
 WORKDIR /app
 

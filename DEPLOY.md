@@ -51,7 +51,7 @@ When it goes live, your app will be at
 Render reads the `Dockerfile` at the repo root. The Dockerfile has
 **three stages**:
 
-1. **`assets`** (Node 20.19 alpine) — `npm ci && npm run build`,
+1. **`assets`** (Node 22, Debian slim) — `npm ci && npm run build`,
    produces `public/build/`.
 2. **`vendor`** (composer:2.7) — `composer install --no-dev
    --optimize-autoloader`, produces `vendor/`.
@@ -212,7 +212,8 @@ curl -fsSL https://qrcanvas-platform.onrender.com/
 |---|---|---|
 | "Class not found" errors | composer install didn't autoload | Check build log; verify `--optimize-autoloader` |
 | Frontend shows raw `@{{ }}` | `npm run build` didn't run | Check Node version; Render needs Node 20.19+ (set in `render.yaml` build env) |
-| Build fails at `RUN npm run build` with `errors: [Getter/Setter]` from rolldown | V8 heap too small (Render's starter tier limits RAM) OR Node version too old | The Dockerfile already sets `NODE_OPTIONS=--max-old-space-size=4096` and uses `node:22-alpine`. If it still fails, upgrade your Render instance plan (Standard or above has ≥2 GB RAM). |
+| Build fails at `RUN npm run build` with `errors: [Getter/Setter]` from rolldown | V8 heap too small (Render's starter tier limits RAM) | The Dockerfile already sets `NODE_OPTIONS=--max-old-space-size=4096`. If it still fails, upgrade your Render instance plan (Standard or above has ≥2 GB RAM). |
+| Build fails at `RUN npm run build` with `aggregateBindingErrorsIntoJsError` (fails almost instantly, before any modules transform) | Rolldown/Tailwind-oxide/lightningcss's musl native binding failed to load on Alpine | The `assets` stage now uses `node:22-bookworm-slim` (glibc) instead of `node:22-alpine` — this sidesteps musl native-binding bugs entirely. Don't switch it back to an Alpine base. |
 | Storage 403 on `/storage/qr/...` | `storage:link` didn't run | `render exec` into the container and run `php artisan storage:link` |
 | "could not find driver pgsql" | Missing PHP extension | Verify `pdo_pgsql` is in the Dockerfile (it is) |
 | DB connection refused | Wrong DB host | Use `DATABASE_URL` from Render's Internal Database, not External |
