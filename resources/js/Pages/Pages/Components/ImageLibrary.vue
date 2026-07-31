@@ -470,6 +470,12 @@ const categoryItems = computed(() => currentCategory.value?.items ?? [])
 
                 <div v-if="bgSubtab === 'solids'" class="grid grid-cols-5 gap-1.5">
                     <button
+                        class="h-8 w-full rounded-lg border border-gray-300 transition hover:scale-110 active:scale-95 bg-transparent"
+                        style="background-image: linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%); background-size: 8px 8px; background-position: 0 0, 0 4px, 4px -4px, -4px 0;"
+                        @click="$emit('setBackground', 'transparent')"
+                        title="Transparent"
+                    ></button>
+                    <button
                         v-for="c in ['#ef4444','#f97316','#eab308','#22c55e','#06b6d4','#3b82f6','#8b5cf6','#ec4899','#64748b','#1e293b','#dc2626','#ea580c','#ca8a04','#16a34a','#0891b2','#2563eb','#7c3aed','#db2777','#475569','#0f172a']"
                         :key="c"
                         class="h-8 w-full rounded-lg border border-gray-200 transition hover:scale-110 active:scale-95"
