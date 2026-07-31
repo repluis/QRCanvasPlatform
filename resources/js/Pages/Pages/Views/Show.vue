@@ -1,5 +1,5 @@
 <script setup>
-import { computed, defineOptions, onMounted, onUnmounted, ref } from 'vue'
+import { computed, defineOptions, onMounted, onUnmounted, ref, watchEffect } from 'vue'
 import { Head, usePage } from '@inertiajs/vue3'
 
 defineOptions({ layout: null })
@@ -11,6 +11,16 @@ const viewportWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 12
 function updateViewport() {
     viewportWidth.value = window.innerWidth
 }
+
+// Keep the printed title clean — browsers print document.title in the header.
+// Strip the autoprint/card query params from what the browser sees.
+function cleanTitle() {
+    if (typeof document === 'undefined') return
+    document.title = page.title || 'Untitled'
+}
+
+watchEffect(cleanTitle)
+onMounted(cleanTitle)
 
 onMounted(() => {
     window.addEventListener('resize', updateViewport)
@@ -85,7 +95,7 @@ function elementStyle(el) {
 <template>
     <Head :title="page.title" />
 
-    <div class="flex min-h-screen flex-col items-center gap-6 overflow-x-hidden p-2 sm:p-4 print:gap-4 print:p-2" :style="{ backgroundColor: 'var(--bg)', paddingTop: '2rem' }">
+    <div class="flex min-h-screen flex-col items-center gap-6 overflow-x-hidden bg-[var(--bg)] p-2 pt-8 sm:p-4 print:bg-white print:gap-4 print:p-2" :style="{ paddingTop: '2rem' }">
 
 
         <div
@@ -162,3 +172,23 @@ function elementStyle(el) {
         <p v-if="visibleCanvases.length === 0" class="text-gray-400">No hay tarjetas visibles</p>
     </div>
 </template>
+
+<style>
+/* Force background colors and images to actually print.
+   Browsers strip these by default to save ink; users have to enable
+   "Print backgrounds" in their browser settings. These hints tell the
+   browser the user explicitly wants backgrounds. */
+@media print {
+    html, body, * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        color-adjust: exact !important;
+    }
+}
+
+/* Default page setup — smaller margins so cards have room. */
+@page {
+    margin: 8mm;
+    size: auto;
+}
+</style>
