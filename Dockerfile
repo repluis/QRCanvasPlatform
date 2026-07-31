@@ -107,7 +107,9 @@ COPY . .
 COPY --from=assets /app/public/build ./public/build
 
 # Render runs as uid 1000 (the "render" user). Match it so the
-# storage and cache directories are writable.
+# storage and cache directories are writable. public/ also needs to
+# be owned by 1000 — storage:link creates public/storage at runtime
+# and public/ was copied in as root via `COPY . .`.
 RUN mkdir -p \
         storage/framework/cache/data \
         storage/framework/sessions \
@@ -116,8 +118,8 @@ RUN mkdir -p \
         storage/logs \
         bootstrap/cache \
         storage/app/public/qr \
-    && chown -R 1000:1000 storage bootstrap/cache \
-    && chmod -R ug+rwX storage bootstrap/cache
+    && chown -R 1000:1000 storage bootstrap/cache public \
+    && chmod -R ug+rwX storage bootstrap/cache public
 
 # Entrypoint: run package discovery, ensure storage link exists,
 # cache config/routes/views, run migrations, then start the server.
