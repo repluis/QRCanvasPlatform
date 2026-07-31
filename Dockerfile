@@ -119,6 +119,15 @@ RUN mkdir -p \
     && chown -R 1000:1000 storage bootstrap/cache \
     && chmod -R ug+rwX storage bootstrap/cache
 
+# Entrypoint: run package discovery, ensure storage link exists,
+# cache config/routes/views, run migrations, then start the server.
+# We use a shell script so each step is readable and we can use
+# Render env vars at runtime (NOT baked into the image).
+# Must run as root (before USER 1000) — chmod on a just-copied,
+# root-owned file fails once we've already dropped privileges.
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 USER 1000
 
 EXPOSE 10000
@@ -126,12 +135,5 @@ EXPOSE 10000
 # Health check — Render uses this to confirm the service is up.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
     CMD curl -fsS "http://127.0.0.1:${PORT}/up" || exit 1
-
-# Entrypoint: run package discovery, ensure storage link exists,
-# cache config/routes/views, run migrations, then start the server.
-# We use a shell script so each step is readable and we can use
-# Render env vars at runtime (NOT baked into the image).
-COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
 
 ENTRYPOINT ["entrypoint.sh"]
