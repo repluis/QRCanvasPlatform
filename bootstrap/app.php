@@ -27,6 +27,12 @@ return Application::configure(basePath: dirname(__DIR__))
             'login',
             'qr/generate',
         ]);
+
+        // Render terminates TLS at its edge proxy and forwards plain HTTP
+        // to this container. Without trusting that proxy, Laravel can't
+        // see X-Forwarded-Proto and generates http:// asset/route URLs
+        // on an https:// page (mixed-content errors).
+        $middleware->trustProxies(at: '*');
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
