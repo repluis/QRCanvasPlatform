@@ -1,7 +1,7 @@
 <script setup>
 import { Head, useForm } from '@inertiajs/vue3'
 import { defineOptions } from 'vue'
-import BaseButton from '../../../components/ui/BaseButton.vue'
+import BaseButton from '../../../Components/ui/BaseButton.vue'
 
 defineOptions({ layout: null })
 
