@@ -12,6 +12,7 @@ class Page extends Entity
         private array $elements = [],
         private ?array $canvases = null,
         private string $background = '#ffffff',
+        private bool $status = true,
         private ?string $slug = null,
         private ?string $uuid = null,
         private ?int $userId = null,
@@ -64,6 +65,16 @@ class Page extends Entity
     public function getCreatedAt(): mixed
     {
         return $this->createdAt;
+    }
+
+    public function getStatus(): bool
+    {
+        return $this->status;
+    }
+
+    public function isPublished(): bool
+    {
+        return $this->status;
     }
 
     public function getUpdatedAt(): mixed

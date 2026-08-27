@@ -5,8 +5,31 @@ import { Head, Link, usePage, router } from '@inertiajs/vue3'
 const { userPages } = usePage().props
 const user = usePage().props.auth?.user
 
+const pages = ref(userPages.map(p => ({ ...p })))
+
 function navigateToCanvas() {
     router.visit('/canvas')
+}
+
+async function toggleStatus(page) {
+    const prev = page.status
+    page.status = !page.status
+    try {
+        const res = await fetch('/pages/toggle-status', {
+            method: 'POST',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') ?? '',
+            },
+            body: JSON.stringify({ id: page.id }),
+        })
+        if (!res.ok) {
+            page.status = prev
+        }
+    } catch {
+        page.status = prev
+    }
 }
 
 const templates = ref([])
@@ -138,7 +161,7 @@ async function useTemplate(template) {
         </div>
 
         <div
-            v-if="userPages.length === 0"
+            v-if="pages.length === 0"
             class="rounded-2xl border-2 border-dashed p-16 text-center"
             :style="{
                 borderColor: 'var(--border)',
@@ -159,7 +182,7 @@ async function useTemplate(template) {
 
         <div v-else class="grid gap-4 sm:grid-cols-2">
             <div
-                v-for="p in userPages"
+                v-for="p in pages"
                 :key="p.uuid"
                 class="group rounded-xl border p-5 shadow-sm transition hover:shadow-md"
                 :style="{
@@ -167,16 +190,28 @@ async function useTemplate(template) {
                     borderColor: 'var(--border)',
                 }"
             >
-                <div class="mb-3">
-                    <h3
-                        class="truncate text-lg font-semibold"
-                        :style="{ color: 'var(--text)' }"
+                <div class="mb-3 flex items-start justify-between">
+                    <div>
+                        <h3
+                            class="truncate text-lg font-semibold"
+                            :style="{ color: 'var(--text)' }"
+                        >
+                            {{ p.title }}
+                        </h3>
+                        <p class="text-xs" :style="{ color: 'var(--text-dim)' }">
+                            {{ p.updated_at }}
+                        </p>
+                    </div>
+                    <button
+                        class="flex-shrink-0 ml-3 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider transition"
+                        :style="{
+                            backgroundColor: p.status ? 'rgba(34,197,94,0.15)' : 'rgba(239,68,68,0.15)',
+                            color: p.status ? '#22c55e' : '#ef4444',
+                        }"
+                        @click="toggleStatus(p)"
                     >
-                        {{ p.title }}
-                    </h3>
-                    <p class="text-xs" :style="{ color: 'var(--text-dim)' }">
-                        {{ p.updated_at }}
-                    </p>
+                        {{ p.status ? 'Active' : 'Disabled' }}
+                    </button>
                 </div>
                 <div class="flex gap-2">
                     <Link
@@ -189,13 +224,13 @@ async function useTemplate(template) {
                     >
                         View
                     </Link>
-                        <Link
-                            :href="'/canvas?uuid=' + p.uuid"
-                            class="rounded-lg px-3 py-1.5 text-xs font-medium text-white transition hover:opacity-90"
-                            :style="{ backgroundColor: 'var(--primary)' }"
-                        >
-                            Edit
-                        </Link>
+                    <Link
+                        :href="'/canvas?uuid=' + p.uuid"
+                        class="rounded-lg px-3 py-1.5 text-xs font-medium text-white transition hover:opacity-90"
+                        :style="{ backgroundColor: 'var(--primary)' }"
+                    >
+                        Edit
+                    </Link>
                 </div>
             </div>
         </div>

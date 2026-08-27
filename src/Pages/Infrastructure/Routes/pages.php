@@ -10,6 +10,8 @@ Route::middleware('web')->group(function () {
     Route::middleware('auth')->group(function () {
         Route::get('/canvas', [PageController::class, 'editor'])->name('pages.canvas');
         Route::post('/pages', [PageController::class, 'save'])->name('pages.save');
+        Route::post('/pages/toggle-status', [PageController::class, 'toggleStatus'])
+            ->name('pages.toggle-status');
 
         // Templates
         Route::get('/templates', [TemplateController::class, 'index'])->name('templates.index');

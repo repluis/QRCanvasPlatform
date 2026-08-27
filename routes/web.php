@@ -9,8 +9,10 @@ Route::get('/', function (GetUserPagesAction $action) {
 
     return Inertia::render('Home', [
         'userPages' => array_map(fn ($p) => [
+            'id' => $p->getId(),
             'uuid' => $p->getUuid(),
             'title' => $p->getTitle(),
+            'status' => $p->getStatus(),
             'updated_at' => $p->getUpdatedAt()?->diffForHumans(),
         ], $userPages),
     ]);

@@ -38,4 +38,16 @@ class PageRepository implements PageRepositoryInterface
             ->map(fn (PageModel $model) => $model->toEntity())
             ->all();
     }
+
+    public function toggleStatus(int $pageId, int $userId): Page
+    {
+        $model = PageModel::where('id', $pageId)
+            ->where('user_id', $userId)
+            ->firstOrFail();
+
+        $model->status = !$model->status;
+        $model->save();
+
+        return $model->toEntity();
+    }
 }

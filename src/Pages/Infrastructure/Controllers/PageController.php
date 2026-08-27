@@ -8,6 +8,7 @@ use Inertia\Inertia;
 use Src\Pages\Application\Actions\GetPageAction;
 use Src\Pages\Application\Actions\GetUserPagesAction;
 use Src\Pages\Application\Actions\SavePageAction;
+use Src\Pages\Application\Actions\TogglePageStatusAction;
 use Src\Pages\Application\DTO\SavePageDTO;
 use Src\Shared\Infrastructure\Controllers\BaseController;
 
@@ -17,6 +18,7 @@ class PageController extends BaseController
         private readonly SavePageAction $savePageAction,
         private readonly GetPageAction $getPageAction,
         private readonly GetUserPagesAction $getUserPagesAction,
+        private readonly TogglePageStatusAction $togglePageStatusAction,
     ) {}
 
     private function buildPageResponse($found): array
@@ -147,8 +149,42 @@ class PageController extends BaseController
             abort(404);
         }
 
+        if (!$page->getStatus()) {
+            Log::info('[PageController] page deshabilitada, mostrando 404', ['uuid' => $uuid]);
+            abort(404);
+        }
+
         return Inertia::render('Pages/Views/Show', [
             'page' => $this->buildPageResponse($page),
         ]);
+    }
+
+    public function toggleStatus(Request $request)
+    {
+        $userId = auth()->id();
+        $pageId = $request->integer('id');
+
+        if (!$pageId) {
+            return response()->json(['error' => 'Missing page id'], 422);
+        }
+
+        try {
+            $page = $this->togglePageStatusAction->execute($pageId, $userId);
+
+            return response()->json([
+                'message' => 'Status updated',
+                'page' => [
+                    'id' => $page->getId(),
+                    'uuid' => $page->getUuid(),
+                    'status' => $page->getStatus(),
+                ],
+            ]);
+        } catch (\Throwable $e) {
+            Log::error('[PageController] toggleStatus error', [
+                'message' => $e->getMessage(),
+            ]);
+
+            return response()->json(['error' => $e->getMessage()], 404);
+        }
     }
 }

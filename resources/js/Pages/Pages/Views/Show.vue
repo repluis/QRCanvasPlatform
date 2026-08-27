@@ -7,6 +7,10 @@ defineOptions({ layout: null })
 
 const { page } = usePage().props
 
+if (!page || page.status === false) {
+    window.location.href = '/'
+}
+
 const viewportWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1280)
 
 function updateViewport() {

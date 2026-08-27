@@ -14,4 +14,6 @@ interface PageRepositoryInterface
 
     /** @return Page[] */
     public function findByUserId(int $userId): array;
+
+    public function toggleStatus(int $pageId, int $userId): Page;
 }

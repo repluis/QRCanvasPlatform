@@ -19,6 +19,7 @@ class PageModel extends Model
         'elements',
         'canvases',
         'background',
+        'status',
         'slug',
         'uuid',
         'user_id',
@@ -27,6 +28,7 @@ class PageModel extends Model
     protected $casts = [
         'elements' => 'array',
         'canvases' => 'array',
+        'status' => 'boolean',
     ];
 
     public function user(): BelongsTo
@@ -42,6 +44,7 @@ class PageModel extends Model
             elements: $this->elements ?? [],
             canvases: $this->canvases ?? null,
             background: $this->background ?? '#ffffff',
+            status: $this->status ?? true,
             slug: $this->slug,
             uuid: $this->uuid,
             userId: $this->user_id,
@@ -60,6 +63,7 @@ class PageModel extends Model
         $model->elements = $page->getElements();
         $model->canvases = $page->hasCanvases() ? $page->getCanvases() : null;
         $model->background = $page->getBackground();
+        $model->status = $page->getStatus();
         $model->slug = $page->getSlug();
         $model->uuid = $page->getUuid();
         $model->user_id = $page->getUserId();
