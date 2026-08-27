@@ -2,6 +2,7 @@
 import { ref, computed } from 'vue'
 import QRElement from './QRElement.vue'
 import CarouselElement from './CarouselElement.vue'
+import NavigationElement from './NavigationElement.vue'
 
 const props = defineProps({
     element: { type: Object, required: true },
@@ -112,6 +113,10 @@ function onMouseDown(e) {
         />
         <CarouselElement
             v-else-if="element.type === 'carousel'"
+            :element="element"
+        />
+        <NavigationElement
+            v-else-if="element.type === 'navigation'"
             :element="element"
         />
         <div

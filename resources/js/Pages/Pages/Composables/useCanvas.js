@@ -146,6 +146,29 @@ export function useCanvas(initialCanvases) {
         selectedId.value = id
     }
 
+    function addNavigation(items) {
+        const id = String(nextId++)
+        const el = {
+            id,
+            type: 'navigation',
+            x: 50,
+            y: 500,
+            width: 700,
+            height: 60,
+            items: items || [
+                { label: 'Menú', targetCard: 1 },
+                { label: 'Bebidas', targetCard: 2 },
+                { label: 'Contacto', targetCard: 3 },
+            ],
+            buttonColor: '#d97706',
+            buttonTextColor: '#ffffff',
+            borderRadius: 8,
+            gap: 10,
+        }
+        canvases.value[activeIndex.value].elements.push(el)
+        selectedId.value = id
+    }
+
     function removeSelected() {
         if (!selectedId.value) return
         canvases.value[activeIndex.value].elements = elements.value.filter((el) => el.id !== selectedId.value)
@@ -238,6 +261,7 @@ export function useCanvas(initialCanvases) {
         addCarousel,
         addQR,
         addAnimation,
+        addNavigation,
         removeSelected,
         select,
         updateElement,

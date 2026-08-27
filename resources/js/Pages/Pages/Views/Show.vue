@@ -12,9 +12,17 @@ if (!page || page.status === false) {
 }
 
 const viewportWidth = ref(typeof window !== 'undefined' ? window.innerWidth : 1280)
+const cardRefs = ref([])
 
 function updateViewport() {
     viewportWidth.value = window.innerWidth
+}
+
+function jumpToCard(visibleIndex) {
+    const el = cardRefs.value[visibleIndex]
+    if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
 }
 
 // Keep the printed title clean — browsers print document.title in the header.
@@ -106,6 +114,7 @@ function elementStyle(el) {
         <div
             v-for="(canvas, ci) in visibleCanvases"
             :key="ci"
+            :ref="el => { if (el) cardRefs[ci] = el }"
             class="relative shrink-0 print:break-after-page"
             :style="{
                 width: ((canvas.width || 800) * canvasScale(canvas)) + 'px',
@@ -163,6 +172,24 @@ function elementStyle(el) {
                                 lineHeight: 1,
                             }"
                         >{{ el.content }}</div>
+                        <div
+                            v-else-if="el.type === 'navigation'"
+                            class="flex h-full w-full items-center gap-2"
+                        >
+                            <button
+                                v-for="(item, ni) in el.items"
+                                :key="ni"
+                                class="flex-shrink-0 rounded px-4 py-2 text-sm font-semibold whitespace-nowrap transition hover:opacity-80 active:scale-95 cursor-pointer"
+                                :style="{
+                                    backgroundColor: el.buttonColor || '#d97706',
+                                    color: el.buttonTextColor || '#ffffff',
+                                    borderRadius: `${el.borderRadius || 8}px`,
+                                }"
+                                @click="jumpToCard(item.targetCard)"
+                            >
+                                {{ item.label }}
+                            </button>
+                        </div>
                         <div v-else-if="el.type === 'text'">
                             {{ el.content }}
                         </div>

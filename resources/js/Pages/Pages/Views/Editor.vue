@@ -9,6 +9,7 @@ import EditorCanvas from '../Components/EditorCanvas.vue'
 import ImageLibrary from '../Components/Sidebar/index.vue'
 import TextPropertiesPanel from '../Components/TextPropertiesPanel.vue'
 import QRPropertiesPanel from '../Components/QRPropertiesPanel.vue'
+import NavigationPropertiesPanel from '../Components/NavigationPropertiesPanel.vue'
 import { savePage } from '../Services/canvas.service'
 
 const { images, userPages, page } = usePage().props
@@ -65,6 +66,7 @@ const {
     addQR,
     addAnimation,
     addCarousel,
+    addNavigation,
     removeSelected,
     select,
     updateElement,
@@ -245,6 +247,7 @@ function handleAddQR(qrConfig) {
                 @add-image="addImage"
                 @add-shape="addShape"
                 @add-qr="handleAddQR({ text: origin + '/page?uuid=' + currentUuid, foreground_color: '#000000', background_color: '#ffffff', error_correction_level: 'medium' })"
+                @add-navigation="addNavigation"
                 @remove="removeSelected"
                 @bring-forward="bringForward(selectedId)"
                 @send-backward="sendBackward(selectedId)"
@@ -450,6 +453,13 @@ function handleAddQR(qrConfig) {
             <QRPropertiesPanel
                 v-if="selectedElement?.type === 'qr'"
                 :element="selectedElement"
+                @update="(id, props) => updateElement(id, props)"
+            />
+
+            <NavigationPropertiesPanel
+                v-if="selectedElement?.type === 'navigation'"
+                :element="selectedElement"
+                :total-cards="canvases.length"
                 @update="(id, props) => updateElement(id, props)"
             />
         </div>

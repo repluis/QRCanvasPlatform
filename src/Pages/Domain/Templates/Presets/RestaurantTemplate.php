@@ -85,14 +85,19 @@ class RestaurantTemplate implements PageTemplate
                  'fontStyle' => 'normal', 'textDecoration' => 'none',
                  'textAlign' => 'center', 'fontFamily' => 'sans-serif',
                  'color' => '#000000'],
-                // CTA
-                ['id' => 'r-9',  'type' => 'text',
-                 'x' => 150, 'y' => 510, 'width' => 500, 'height' => 50,
-                 'content' => '▶ Desliza para ver el menú completo',
-                 'fontSize' => 16, 'fontWeight' => 'normal',
-                 'fontStyle' => 'normal', 'textDecoration' => 'none',
-                 'textAlign' => 'center', 'fontFamily' => 'sans-serif',
-                 'color' => '#78716c'],
+                // Navigation buttons
+                ['id' => 'r-9',  'type' => 'navigation',
+                 'x' => 80, 'y' => 500, 'width' => 640, 'height' => 60,
+                 'items' => [
+                     ['label' => '🍽️ Menú', 'targetCard' => 1],
+                     ['label' => '🍷 Bebidas', 'targetCard' => 2],
+                     ['label' => '🕐 Horarios', 'targetCard' => 3],
+                     ['label' => '📞 Reservar', 'targetCard' => 4],
+                 ],
+                 'buttonColor' => '#d97706',
+                 'buttonTextColor' => '#ffffff',
+                 'borderRadius' => 8,
+                 'gap' => 10],
             ],
         ];
 
