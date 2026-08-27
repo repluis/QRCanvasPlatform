@@ -1,68 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 
-const props = defineProps({
-    images: { type: Array, default: () => [] },
-    shapes: { type: Array, default: () => [] },
-    phrases: { type: Array, default: () => [] },
-})
-
-const emit = defineEmits(['addImageToCanvas', 'addShape', 'addText', 'setBackground', 'addAnimation', 'addCarousel'])
-
-const tab = ref('images')
-const imgCategory = ref('love')
-const bgSubtab = ref('solids')
-
-const ANIMATIONS = [
-    { id: 'float-heart',     label: 'Heart float',     emoji: '💖', color: '#ef4444', fontSize: 56 },
-    { id: 'spin-star',       label: 'Spinning star',   emoji: '⭐', color: '#fbbf24', fontSize: 52 },
-    { id: 'pulse-heart',     label: 'Pulse heart',     emoji: '❤️', color: '#dc2626', fontSize: 56 },
-    { id: 'bounce-circle',   label: 'Bouncing ball',   emoji: '🔴', color: '#ef4444', fontSize: 48 },
-    { id: 'twinkle-star',    label: 'Twinkling star',  emoji: '✨', color: '#facc15', fontSize: 52 },
-    { id: 'drift-cloud',     label: 'Floating cloud',  emoji: '☁️', color: '#94a3b8', fontSize: 52 },
-    { id: 'float-flower',    label: 'Floating flower', emoji: '🌸', color: '#f472b6', fontSize: 52 },
-    { id: 'spin-moon',       label: 'Spinning moon',   emoji: '🌙', color: '#fbbf24', fontSize: 52 },
-]
-
-function readFiles(files) {
-    return Promise.all([...files].map(file => new Promise((resolve, reject) => {
-        if (!file.type.startsWith('image/')) return resolve(null)
-        const reader = new FileReader()
-        reader.onload = (ev) => resolve(ev.target.result)
-        reader.onerror = reject
-        reader.readAsDataURL(file)
-    }))).then(urls => urls.filter(Boolean))
-}
-
-function onCarouselFiles(e) {
-    const files = e.target.files
-    if (!files || files.length === 0) return
-    readFiles(files).then(urls => {
-        if (urls.length > 0) {
-            emit('addCarousel', urls)
-        }
-        e.target.value = ''
-    })
-}
-
-const SHAPE_ICONS = {
-    heart: 'M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z',
-    star: 'M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z',
-    circle: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z',
-    moon: 'M12 3a9 9 0 109 9c0-.46-.04-.92-.1-1.36a5.389 5.389 0 01-4.4 2.26 5.403 5.403 0 01-3.14-9.8c-.44-.06-.9-.1-1.36z',
-    diamond: 'M12 2L2 12l10 10 10-10L12 2z',
-    triangle: 'M12 2L2 22h20L12 2z',
-    hexagon: 'M12 2l8.66 5v10L12 22l-8.66-5V7L12 2z',
-    cloud: 'M19.35 10.04A7.49 7.49 0 0012 4C9.11 4 6.6 5.64 5.35 8.04A5.994 5.994 0 000 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96z',
-    'arrow-right': 'M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z',
-    'arrow-left': 'M12 20l1.41-1.41L7.83 13H20v-2H7.83l5.58-5.59L12 4l-8 8z',
-    'arrow-up': 'M4 12l1.41 1.41L11 7.83V20h2V7.83l5.59 5.58L20 12l-8-8z',
-    'arrow-down': 'M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.59-5.58L4 12l8 8z',
-    cross: 'M10 2h4v8h8v4h-8v8h-4v-8H2v-4h8z',
-    plus: 'M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z',
-    check: 'M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z',
-    lightning: 'M13 2L3 14h7l-1 8 10-12h-7z',
-}
+const emit = defineEmits(['addImage'])
 
 function svgDataUri(svg) {
     return 'data:image/svg+xml,' + encodeURIComponent(svg)
@@ -372,188 +311,41 @@ const IMAGE_CATEGORIES = {
     },
 }
 
+const imgCategory = ref('love')
 const currentCategory = computed(() => IMAGE_CATEGORIES[imgCategory.value])
 const categoryItems = computed(() => currentCategory.value?.items ?? [])
 </script>
 
 <template>
-    <div class="flex w-64 flex-col border-l bg-white">
-        <div class="flex border-b">
+    <div class="space-y-3">
+        <div class="flex flex-wrap gap-1">
             <button
-                v-for="t in ['images', 'shapes', 'phrases', 'animations', 'carousel', 'backgrounds']"
-                :key="t"
-                class="flex-1 px-2 py-2.5 text-xs font-semibold uppercase tracking-wider transition"
-                :class="tab === t
-                    ? 'border-b-2 border-indigo-500 text-indigo-600'
-                    : 'text-gray-400 hover:text-gray-600'"
-                @click="tab = t"
+                v-for="(cat, key) in IMAGE_CATEGORIES"
+                :key="key"
+                class="rounded px-2 py-1 text-xs font-medium transition"
+                :class="imgCategory === key
+                    ? 'bg-rose-100 text-rose-700'
+                    : 'text-gray-500 hover:bg-gray-100'"
+                @click="imgCategory = key"
             >
-                {{ t === 'images' ? 'Img' : t === 'shapes' ? 'Shapes' : t === 'phrases' ? 'Text' : t === 'animations' ? 'Anim' : t === 'carousel' ? 'Car' : 'Bg' }}
+                {{ cat.label }}
             </button>
         </div>
 
-        <div class="flex-1 overflow-y-auto p-3">
-            <div v-if="tab === 'images'" key="images-tab">
-                <div class="mb-3 flex gap-1">
-                    <button
-                        v-for="(cat, key) in IMAGE_CATEGORIES"
-                        :key="key"
-                        class="flex-1 rounded px-2 py-1 text-xs font-medium transition"
-                        :class="imgCategory === key
-                            ? 'bg-rose-100 text-rose-700'
-                            : 'text-gray-500 hover:bg-gray-100'"
-                        @click="imgCategory = key"
-                    >
-                        {{ cat.label }}
-                    </button>
-                </div>
-
-                <div class="grid grid-cols-2 gap-2">
-                    <button
-                        v-for="item in categoryItems"
-                        :key="item.id"
-                        class="group relative overflow-hidden rounded-lg border-2 border-transparent transition hover:border-rose-400 active:scale-95"
-                        @click="$emit('addImageToCanvas', item.svg())"
-                        :title="'Add ' + item.label"
-                    >
-                        <img
-                            :src="item.svg()"
-                            :alt="item.label"
-                            class="h-24 w-full object-cover"
-                        />
-                    </button>
-                </div>
-            </div>
-
-            <div v-if="tab === 'shapes'" class="grid grid-cols-3 gap-2">
-                <button
-                    v-for="s in shapes"
-                    :key="s"
-                    class="flex flex-col items-center gap-1 rounded-lg border-2 border-transparent p-3 transition hover:border-pink-400 hover:bg-pink-50 active:scale-95"
-                    @click="$emit('addShape', s)"
-                    :title="'Add ' + s"
-                >
-                    <svg class="h-7 w-7 text-pink-500" fill="currentColor" viewBox="0 0 24 24">
-                        <path :d="SHAPE_ICONS[s]" />
-                    </svg>
-                    <span class="text-xs capitalize text-gray-500">{{ s }}</span>
-                </button>
-            </div>
-
-            <div v-if="tab === 'phrases'" class="space-y-2">
-                <button
-                    v-for="(phrase, i) in phrases"
-                    :key="i"
-                    class="w-full rounded-lg border-2 border-transparent px-4 py-3 text-left text-sm transition hover:border-rose-300 hover:bg-rose-50 active:scale-95"
-                    @click="$emit('addText', phrase)"
-                >
-                    <span class="text-gray-700">{{ phrase }}</span>
-                </button>
-            </div>
-
-            <div v-if="tab === 'animations'" class="space-y-2">
-                <p class="mb-2 text-xs text-gray-400">
-                    Elementos con animación CSS — se reproducen continuamente al ver la página.
-                </p>
-                <button
-                    v-for="a in ANIMATIONS"
-                    :key="a.id"
-                    class="group flex w-full items-center gap-3 rounded-lg border-2 border-transparent px-3 py-2 text-left transition hover:border-indigo-400 hover:bg-indigo-50 active:scale-95"
-                    @click="$emit('addAnimation', a)"
-                    :title="'Add ' + a.label"
-                >
-                    <span
-                        class="text-2xl"
-                        :style="{
-                            color: a.color,
-                            animation: `${a.id} 2.4s ease-in-out infinite`,
-                            display: 'inline-block',
-                        }"
-                    >{{ a.emoji }}</span>
-                    <span class="flex-1 text-sm font-medium text-gray-700">{{ a.label }}</span>
-                </button>
-            </div>
-
-            <div v-if="tab === 'carousel'" class="space-y-3">
-                <p class="text-xs text-gray-400">
-                    Sube 2 o más fotos para crear un carrusel. Luego podrás verlo y pasar las fotos con las flechas ◀ ▶.
-                </p>
-                <label
-                    class="flex w-full cursor-pointer items-center justify-center gap-2 rounded-lg border-2 border-dashed border-indigo-300 px-4 py-6 text-sm font-medium text-indigo-600 transition hover:border-indigo-400 hover:bg-indigo-50 active:scale-95"
-                >
-                    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    Subir fotos (multi-select)
-                    <input
-                        type="file"
-                        accept="image/*"
-                        multiple
-                        class="hidden"
-                        @change="onCarouselFiles"
-                    />
-                </label>
-                <p class="text-xs text-gray-400">Selecciona 2 o más imágenes para crear el carrusel.</p>
-            </div>
-
-            <div v-if="tab === 'backgrounds'">
-                <div class="mb-3 flex gap-1">
-                    <button
-                        v-for="st in ['solids', 'pastels', 'gradients']"
-                        :key="st"
-                        class="flex-1 rounded px-2 py-1 text-xs font-medium transition"
-                        :class="bgSubtab === st
-                            ? 'bg-indigo-100 text-indigo-700'
-                            : 'text-gray-500 hover:bg-gray-100'"
-                        @click="bgSubtab = st"
-                    >
-                        {{ st === 'solids' ? 'Solid' : st === 'pastels' ? 'Pastel' : 'Gradient' }}
-                    </button>
-                </div>
-
-                <div v-if="bgSubtab === 'solids'" class="grid grid-cols-5 gap-1.5">
-                    <button
-                        class="h-8 w-full rounded-lg border border-gray-300 transition hover:scale-110 active:scale-95 bg-transparent"
-                        style="background-image: linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%); background-size: 8px 8px; background-position: 0 0, 0 4px, 4px -4px, -4px 0;"
-                        @click="$emit('setBackground', 'transparent')"
-                        title="Transparent"
-                    ></button>
-                    <button
-                        v-for="c in ['#ef4444','#f97316','#eab308','#22c55e','#06b6d4','#3b82f6','#8b5cf6','#ec4899','#64748b','#1e293b','#dc2626','#ea580c','#ca8a04','#16a34a','#0891b2','#2563eb','#7c3aed','#db2777','#475569','#0f172a']"
-                        :key="c"
-                        class="h-8 w-full rounded-lg border border-gray-200 transition hover:scale-110 active:scale-95"
-                        :style="{ backgroundColor: c }"
-                        @click="$emit('setBackground', c)"
-                        :title="c"
-                    ></button>
-                </div>
-
-                <div v-if="bgSubtab === 'pastels'" class="grid grid-cols-5 gap-1.5">
-                    <button
-                        v-for="c in ['#fce4ec','#f3e5f5','#e8eaf6','#e3f2fd','#e0f7fa','#e0f2f1','#e8f5e9','#fff9c4','#fff3e0','#fbe9e7','#fce4ec','#f1f8e9','#fff8e1','#e1f5fe','#f3e5f5']"
-                        :key="c"
-                        class="h-8 w-full rounded-lg border border-gray-200 transition hover:scale-110 active:scale-95"
-                        :style="{ backgroundColor: c }"
-                        @click="$emit('setBackground', c)"
-                        :title="c"
-                    ></button>
-                </div>
-
-                <div v-if="bgSubtab === 'gradients'" class="space-y-2">
-                    <button
-                        v-for="g in [{l:'Purple Blue',v:'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'},{l:'Pink Red',v:'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)'},{l:'Blue Cyan',v:'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'},{l:'Green Teal',v:'linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)'},{l:'Pink Yellow',v:'linear-gradient(135deg, #fa709a 0%, #fee140 100%)'},{l:'Lavender',v:'linear-gradient(135deg, #a18cd1 0%, #fbc2eb 100%)'},{l:'Peach',v:'linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%)'},{l:'Sky Blue',v:'linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%)'},{l:'Cream Sky',v:'linear-gradient(135deg, #fddb92 0%, #d1fdff 100%)'},{l:'Silver',v:'linear-gradient(135deg, #c3cfe2 0%, #f5f7fa 100%)'},{l:'Sunset',v:'linear-gradient(135deg, #fad0c4 0%, #ffd1ff 100%)'},{l:'Ocean',v:'linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%)'}]"
-                        :key="g.l"
-                        class="h-12 w-full rounded-lg border border-gray-200 transition hover:scale-[1.02] active:scale-95 flex items-center justify-center"
-                        :style="{ background: g.v }"
-                        @click="$emit('setBackground', g.v)"
-                        :title="g.l"
-                    >
-                        <span class="text-xs font-medium drop-shadow-md"
-                            :class="g.l === 'Cream Sky' || g.l === 'Silver' ? 'text-gray-700' : 'text-white'"
-                        >{{ g.l }}</span>
-                    </button>
-                </div>
-            </div>
+        <div class="grid grid-cols-2 gap-2">
+            <button
+                v-for="item in categoryItems"
+                :key="item.id"
+                class="group relative overflow-hidden rounded-lg border-2 border-transparent transition hover:border-rose-400 active:scale-95"
+                @click="emit('addImage', item.svg())"
+                :title="'Add ' + item.label"
+            >
+                <img
+                    :src="item.svg()"
+                    :alt="item.label"
+                    class="h-24 w-full object-cover"
+                />
+            </button>
         </div>
     </div>
 </template>

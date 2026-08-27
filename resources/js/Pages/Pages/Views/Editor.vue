@@ -6,7 +6,7 @@ import { useCanvas } from '../Composables/useCanvas'
 defineOptions({ layout: null })
 import EditorToolbar from '../Components/EditorToolbar.vue'
 import EditorCanvas from '../Components/EditorCanvas.vue'
-import ImageLibrary from '../Components/ImageLibrary.vue'
+import ImageLibrary from '../Components/Sidebar/index.vue'
 import TextPropertiesPanel from '../Components/TextPropertiesPanel.vue'
 import QRPropertiesPanel from '../Components/QRPropertiesPanel.vue'
 import { savePage } from '../Services/canvas.service'
