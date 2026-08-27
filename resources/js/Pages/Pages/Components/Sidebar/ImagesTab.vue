@@ -309,6 +309,142 @@ const IMAGE_CATEGORIES = {
             },
         ],
     },
+    gastronomia: {
+        label: 'Gastronomía',
+        items: [
+            {
+                id: 'gastro-1',
+                label: 'Plato principal',
+                svg: () => svgDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+                    <defs><radialGradient id="pg1" cx="50%" cy="50%" r="50%">
+                        <stop offset="0%" style="stop-color:#fef3c7"/><stop offset="100%" style="stop-color:#f59e0b"/>
+                    </radialGradient></defs>
+                    <ellipse cx="100" cy="120" rx="80" ry="30" fill="#d1d5db" opacity=".3"/>
+                    <ellipse cx="100" cy="110" rx="80" ry="30" fill="#e5e7eb"/>
+                    <ellipse cx="100" cy="105" rx="75" ry="27" fill="#f3f4f6"/>
+                    <ellipse cx="100" cy="100" rx="70" ry="25" fill="#fefce8"/>
+                    <circle cx="80" cy="95" r="12" fill="#dc2626" opacity=".9"/>
+                    <circle cx="100" cy="90" r="10" fill="#ef4444" opacity=".8"/>
+                    <circle cx="118" cy="95" r="11" fill="#dc2626" opacity=".85"/>
+                    <path d="M75 100q25-15 50 0" stroke="#16a34a" stroke-width="3" fill="none"/>
+                    <path d="M85 105q15-8 30 0" stroke="#22c55e" stroke-width="2" fill="none"/>
+                    <ellipse cx="100" cy="108" rx="20" ry="5" fill="#fbbf24" opacity=".6"/>
+                </svg>`),
+            },
+            {
+                id: 'gastro-2',
+                label: 'Copa de vino',
+                svg: () => svgDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+                    <defs><linearGradient id="wg1" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#9f1239"/><stop offset="100%" style="stop-color:#881337"/>
+                    </linearGradient></defs>
+                    <path d="M85 30h30l-5 70q0 15-10 15-10 0-10-15z" fill="url(#wg1)" opacity=".9"/>
+                    <path d="M82 30q-8 10-8 30 0 20 8 30v10h44v-10q8-10 8-30 0-20-8-30z" fill="none" stroke="#d4d4d8" stroke-width="2"/>
+                    <ellipse cx="100" cy="30" rx="15" ry="4" fill="#9f1239" opacity=".6"/>
+                    <rect x="97" y="110" width="6" height="40" rx="3" fill="#d4d4d8"/>
+                    <ellipse cx="100" cy="155" rx="25" ry="6" fill="#d4d4d8"/>
+                    <circle cx="92" cy="50" r="2" fill="#fff" opacity=".3"/>
+                    <circle cx="105" cy="45" r="1.5" fill="#fff" opacity=".2"/>
+                </svg>`),
+            },
+            {
+                id: 'gastro-3',
+                label: 'Tenedor y cuchillo',
+                svg: () => svgDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+                    <rect x="80" y="20" width="4" height="120" rx="2" fill="#a8a29e" transform="rotate(-15 82 80)"/>
+                    <path d="M76 20q-4-10 2-15 6 5 2 15z" fill="#a8a29e" transform="rotate(-15 80 20)"/>
+                    <path d="M80 20q0-10 2-10 2 0 2 10z" fill="#a8a29e" transform="rotate(-15 82 20)"/>
+                    <path d="M84 20q4-10-2-15-6 5-2 15z" fill="#a8a29e" transform="rotate(-15 84 20)"/>
+                    <rect x="116" y="20" width="4" height="120" rx="2" fill="#d4d4d8" transform="rotate(15 118 80)"/>
+                    <path d="M112 20q-6 20 2 30 0-10 6-30z" fill="#d4d4d8" transform="rotate(15 116 20)"/>
+                    <path d="M118 20q6 20-2 30 0-10-6-30z" fill="#d4d4d8" transform="rotate(15 118 20)"/>
+                    <ellipse cx="100" cy="165" rx="30" ry="8" fill="#d4d4d8"/>
+                </svg>`),
+            },
+            {
+                id: 'gastro-4',
+                label: 'Postre',
+                svg: () => svgDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+                    <rect x="60" y="80" width="80" height="70" rx="5" fill="#fbbf24"/>
+                    <rect x="55" y="75" width="90" height="15" rx="7" fill="#f59e0b"/>
+                    <path d="M60 80q40-20 80 0" fill="#fef3c7"/>
+                    <circle cx="80" cy="72" r="8" fill="#dc2626"/>
+                    <circle cx="100" cy="68" r="9" fill="#ef4444"/>
+                    <circle cx="120" cy="72" r="8" fill="#dc2626"/>
+                    <path d="M78 65q2-8 4-12M98 61q2-8 4-12M118 65q2-8 4-12" stroke="#16a34a" stroke-width="2" fill="none"/>
+                    <rect x="65" y="150" width="70" height="8" rx="4" fill="#d4d5db"/>
+                </svg>`),
+            },
+            {
+                id: 'gastro-5',
+                label: 'Café',
+                svg: () => svgDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+                    <defs><linearGradient id="cg1" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" style="stop-color:#78350f"/><stop offset="100%" style="stop-color:#451a03"/>
+                    </linearGradient></defs>
+                    <path d="M55 60h90l-10 90q-2 10-12 10H77q-10 0-12-10z" fill="url(#cg1)"/>
+                    <ellipse cx="100" cy="60" rx="45" ry="8" fill="#92400e"/>
+                    <ellipse cx="100" cy="60" rx="40" ry="6" fill="#78350f"/>
+                    <path d="M145 75q20 0 20 15t-20 15" fill="none" stroke="#a8a29e" stroke-width="4"/>
+                    <path d="M85 45q0-15 5-20" stroke="#d6d3d1" stroke-width="2" fill="none" opacity=".5"/>
+                    <path d="M100 40q0-18 5-25" stroke="#d6d3d1" stroke-width="2" fill="none" opacity=".4"/>
+                    <path d="M115 45q0-15 5-20" stroke="#d6d3d1" stroke-width="2" fill="none" opacity=".5"/>
+                    <ellipse cx="100" cy="175" rx="35" ry="5" fill="#d4d5db"/>
+                </svg>`),
+            },
+            {
+                id: 'gastro-6',
+                label: 'Hamburguesa',
+                svg: () => svgDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+                    <ellipse cx="100" cy="80" rx="55" ry="20" fill="#d97706"/>
+                    <ellipse cx="100" cy="75" rx="50" ry="18" fill="#f59e0b"/>
+                    <path d="M52 82q48 8 96 0" fill="#fbbf24" opacity=".5"/>
+                    <circle cx="70" cy="78" r="2" fill="#fef3c7" opacity=".6"/>
+                    <circle cx="90" cy="75" r="1.5" fill="#fef3c7" opacity=".5"/>
+                    <circle cx="115" cy="77" r="2" fill="#fef3c7" opacity=".6"/>
+                    <rect x="50" y="90" width="100" height="15" rx="3" fill="#16a34a"/>
+                    <rect x="48" y="105" width="104" height="18" rx="4" fill="#92400e"/>
+                    <rect x="50" y="123" width="100" height="12" rx="3" fill="#fbbf24" opacity=".8"/>
+                    <ellipse cx="100" cy="140" rx="55" ry="15" fill="#d97706"/>
+                    <ellipse cx="100" cy="138" rx="50" ry="13" fill="#f59e0b"/>
+                </svg>`),
+            },
+            {
+                id: 'gastro-7',
+                label: 'Pizza',
+                svg: () => svgDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+                    <path d="M100 30L30 170q0 10 10 10h120q10 0 10-10z" fill="#f59e0b"/>
+                    <path d="M100 30L35 165q0 8 8 8h114q8 0 8-8z" fill="#fbbf24"/>
+                    <circle cx="80" cy="100" r="8" fill="#dc2626"/>
+                    <circle cx="110" cy="120" r="9" fill="#dc2626"/>
+                    <circle cx="90" cy="140" r="7" fill="#dc2626"/>
+                    <circle cx="100" cy="80" r="6" fill="#16a34a" opacity=".8"/>
+                    <circle cx="120" cy="100" r="5" fill="#16a34a" opacity=".8"/>
+                    <circle cx="75" cy="130" r="5" fill="#16a34a" opacity=".8"/>
+                    <circle cx="95" cy="110" r="4" fill="#f97316" opacity=".7"/>
+                    <circle cx="115" cy="145" r="4" fill="#f97316" opacity=".7"/>
+                </svg>`),
+            },
+            {
+                id: 'gastro-8',
+                label: 'Sushi',
+                svg: () => svgDataUri(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+                    <ellipse cx="100" cy="130" rx="70" ry="15" fill="#1c1917"/>
+                    <ellipse cx="100" cy="128" rx="65" ry="13" fill="#292524"/>
+                    <ellipse cx="70" cy="100" rx="22" ry="12" fill="#fff" opacity=".95"/>
+                    <ellipse cx="70" cy="98" rx="20" ry="10" fill="#1c1917"/>
+                    <ellipse cx="70" cy="96" rx="18" ry="8" fill="#ef4444" opacity=".9"/>
+                    <ellipse cx="100" cy="95" rx="22" ry="12" fill="#fff" opacity=".95"/>
+                    <ellipse cx="100" cy="93" rx="20" ry="10" fill="#1c1917"/>
+                    <ellipse cx="100" cy="91" rx="18" ry="8" fill="#f97316" opacity=".9"/>
+                    <ellipse cx="130" cy="100" rx="22" ry="12" fill="#fff" opacity=".95"/>
+                    <ellipse cx="130" cy="98" rx="20" ry="10" fill="#1c1917"/>
+                    <ellipse cx="130" cy="96" rx="18" ry="8" fill="#22c55e" opacity=".9"/>
+                    <path d="M40 145h120" stroke="#78716c" stroke-width="1" opacity=".3"/>
+                </svg>`),
+            },
+        ],
+    },
 }
 
 const imgCategory = ref('love')
