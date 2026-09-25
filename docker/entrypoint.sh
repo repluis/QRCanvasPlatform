@@ -8,6 +8,10 @@ set -e
 
 cd /var/www/html
 
+echo "[entrypoint] DEBUG: DB_CONNECTION=${DB_CONNECTION:-NOT_SET}"
+echo "[entrypoint] DEBUG: DATABASE_URL=${DATABASE_URL:-NOT_SET}"
+echo "[entrypoint] DEBUG: APP_ENV=${APP_ENV:-NOT_SET}"
+
 echo "[entrypoint] running artisan package:discover"
 php artisan package:discover --ansi || true
 
