@@ -6,19 +6,21 @@ import BaseButton from '../../../Components/ui/BaseButton.vue'
 defineOptions({ layout: null })
 
 const form = useForm({
+    name: '',
     email: '',
     password: '',
+    password_confirmation: '',
 })
 
 function submit() {
-    form.post('/login', {
-        onError: () => form.reset('password'),
+    form.post('/register', {
+        onError: () => form.reset('password', 'password_confirmation'),
     })
 }
 </script>
 
 <template>
-    <Head title="Sign In" />
+    <Head title="Sign Up" />
 
     <div
         class="flex min-h-screen items-center justify-center"
@@ -41,10 +43,40 @@ function submit() {
                 class="mb-8 text-center text-sm"
                 :style="{ color: 'var(--text-muted)' }"
             >
-                Sign in to continue
+                Create your account
             </p>
 
             <form @submit.prevent="submit" class="space-y-5">
+                <div>
+                    <label
+                        for="name"
+                        class="mb-1 block text-sm font-medium"
+                        :style="{ color: 'var(--text-muted)' }"
+                    >
+                        Name
+                    </label>
+                    <input
+                        id="name"
+                        v-model="form.name"
+                        type="text"
+                        class="w-full rounded-lg border px-4 py-2.5 text-sm outline-none transition"
+                        :style="{
+                            backgroundColor: 'var(--bg)',
+                            borderColor: 'var(--border)',
+                            color: 'var(--text)',
+                        }"
+                        placeholder="John Doe"
+                        autocomplete="name"
+                    />
+                    <p
+                        v-if="form.errors.name"
+                        class="mt-1 text-xs"
+                        :style="{ color: 'var(--danger)' }"
+                    >
+                        {{ form.errors.name }}
+                    </p>
+                </div>
+
                 <div>
                     <label
                         for="email"
@@ -94,8 +126,45 @@ function submit() {
                             color: 'var(--text)',
                         }"
                         placeholder="••••••••"
-                        autocomplete="current-password"
+                        autocomplete="new-password"
                     />
+                    <p
+                        v-if="form.errors.password"
+                        class="mt-1 text-xs"
+                        :style="{ color: 'var(--danger)' }"
+                    >
+                        {{ form.errors.password }}
+                    </p>
+                </div>
+
+                <div>
+                    <label
+                        for="password_confirmation"
+                        class="mb-1 block text-sm font-medium"
+                        :style="{ color: 'var(--text-muted)' }"
+                    >
+                        Confirm Password
+                    </label>
+                    <input
+                        id="password_confirmation"
+                        v-model="form.password_confirmation"
+                        type="password"
+                        class="w-full rounded-lg border px-4 py-2.5 text-sm outline-none transition"
+                        :style="{
+                            backgroundColor: 'var(--bg)',
+                            borderColor: 'var(--border)',
+                            color: 'var(--text)',
+                        }"
+                        placeholder="••••••••"
+                        autocomplete="new-password"
+                    />
+                    <p
+                        v-if="form.errors.password_confirmation"
+                        class="mt-1 text-xs"
+                        :style="{ color: 'var(--danger)' }"
+                    >
+                        {{ form.errors.password_confirmation }}
+                    </p>
                 </div>
 
                 <BaseButton
@@ -105,18 +174,18 @@ function submit() {
                     class="w-full"
                     @click="submit"
                 >
-                    {{ form.processing ? 'Signing in...' : 'Sign In' }}
+                    {{ form.processing ? 'Creating account...' : 'Sign Up' }}
                 </BaseButton>
             </form>
 
             <p class="mt-6 text-center text-sm" :style="{ color: 'var(--text-muted)' }">
-                Don't have an account?
+                Already have an account?
                 <a
-                    href="/register"
+                    href="/login"
                     class="ml-1 font-medium underline underline-offset-2 hover:no-underline"
                     :style="{ color: 'var(--primary)' }"
                 >
-                    Sign Up
+                    Sign In
                 </a>
             </p>
         </div>

@@ -27,6 +27,11 @@ class AuthController extends BaseController
         return Inertia::render('Auth/Views/Login');
     }
 
+    public function showRegister()
+    {
+        return Inertia::render('Auth/Views/Register');
+    }
+
     public function register(Request $request)
     {
         $request->validate([
