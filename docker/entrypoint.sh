@@ -14,16 +14,16 @@ php artisan package:discover --ansi || true
 echo "[entrypoint] ensuring storage symlink"
 php artisan storage:link || true
 
-echo "[entrypoint] caching config / routes / views"
-php artisan config:cache || true
-php artisan route:cache || true
-php artisan view:cache || true
-
-echo "[entrypoint] running migrations"
+echo "[entrypoint] running migrations (before config cache so DATABASE_URL is resolved)"
 php artisan migrate --force --no-interaction || true
 
 echo "[entrypoint] fixing legacy domain in existing pages (no-op if none left)"
 php artisan pages:fix-domain || true
+
+echo "[entrypoint] caching config / routes / views"
+php artisan config:cache || true
+php artisan route:cache || true
+php artisan view:cache || true
 
 echo "[entrypoint] starting php artisan serve on 0.0.0.0:${PORT}"
 exec php artisan serve --host 0.0.0.0 --port "${PORT}"
